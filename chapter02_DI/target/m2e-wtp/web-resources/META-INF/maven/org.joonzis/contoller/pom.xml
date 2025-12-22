@@ -14,7 +14,7 @@
 		<org.slf4j-version>1.6.6</org.slf4j-version>
 	</properties>
 	<dependencies>
-		<!-- Spring -->
+		<!-- Spring --> 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
@@ -115,7 +115,13 @@
 			<artifactId>junit</artifactId>
 			<version>4.7</version>
 			<scope>test</scope>
-		</dependency>        
+		</dependency>  
+		<!-- dependency -->
+		<dependency>
+	     <groupId>cglib</groupId>
+	       <artifactId>cglib</artifactId>
+	     <version>2.2.2</version>
+  		 </dependency>      
 	</dependencies>
     <build>
         <plugins>
