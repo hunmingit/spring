@@ -18,7 +18,7 @@ import lombok.extern.log4j.Log4j;
 @Log4j
 //////실제 프로젝트에서 사용하는 root-context.xml을 그대로 불러옴
 ////Spring 컨테이너가 먼저 실행됨
-//mapper bean 새성됨
+//mapper bean 생성됨
 //@Autowired 사용 가능해짐
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
