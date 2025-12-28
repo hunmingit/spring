@@ -16,7 +16,7 @@ public class BoardServiceImpl implements  BoardService {
    
    @Autowired
    private BoardMapper mapper;
-   
+   //전체 리스트
    @Override
    public List<BoardVO> getList() {
       log.info("getList...");
