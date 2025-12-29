@@ -16,7 +16,7 @@ document.querySelectorAll('button') // a태크 가져오기
 		e.preventDefault(); // 기본 이벤트 방지
 		const type = e.currentTarget.id;
 		if(type === 'indexBtn'){
-			location.href = '/board/list';
+			goBoardList();
 		}else if(type === 'modifyBtn'){
 			modify();//수정페이지 이동
 		}else if(type === 'removeBtn'){
@@ -24,6 +24,7 @@ document.querySelectorAll('button') // a태크 가져오기
 		}
 	});
 });
+//수정
 function modify() {
 	console.log('modify');
 	if(f.title.value === '' || f.content.value === ''){
@@ -34,12 +35,17 @@ function modify() {
 	f.submit();
 	
 }
-
+//삭제 데이터의 변환이 있을때는 post 방식
 function remove() {
-	console.log('remove');
-	let bno = f.bno.value;
-	f.action = `/board/remove?bno=${bno}`;
+	const bonEle = f.bno; //bno를 담고 있는 
+	f.innerHTML = ''; //form 태그 비우기
+	f.appenChild(bnoEle);
+	f.action = 'board/remove';
 	f.submit();
+//	console.log('remove');
+//	let bno = f.bno.value;
+//	f.action = `/board/remove?bno=${bno}`;
+//	f.submit();
 }
 
 

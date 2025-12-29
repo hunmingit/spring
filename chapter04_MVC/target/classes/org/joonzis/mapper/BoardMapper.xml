@@ -5,8 +5,22 @@
 <mapper namespace="org.joonzis.mapper.BoardMapper">
 	<!-- getList() 메소드 이름이 id 임  -->
 	<select id="getList" resultType="org.joonzis.domain.BoardVO">
-		SELECT * FROM tbl_board
+	<!-- <, > 들어가면 CDATA 사용 -->
+		<![CDATA[ 
+		SELECT bno, writer, title, regdate 
+		from (Select ROWNUM rn, a.* 
+			from
+			(Select bno, writer, title, regdate 
+			from tbl_board order by bno desc) a
+			where ROWNUM <= #{pageNum} * #{amount})
+			where rn > (#{pageNum}-1) * #{amount}
+		]]>
 	</select>
+	<!-- 전체 게시글 수 가져오기 getTotal -->
+	<select id="getTotal" resultType="int">
+		SELECT COUNT(*) FROM tbl_board
+	</select>
+	
 	
 	<insert id="insert" parameterType="org.joonzis.domain.BoardVO"> <!-- regdate, updatedate default값 sysdate로 정해져있어서 안넣어됨 -->
 		insert into tbl_board (bno, title, content, writer, regdate)

@@ -1,3 +1,4 @@
+//상세보기 화면
 //---cs 파일 추가
 //1. 파일 경로 설정
 const CSS_FILE_PATH = '/resources/css/get.css';

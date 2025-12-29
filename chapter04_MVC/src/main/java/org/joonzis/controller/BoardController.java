@@ -1,6 +1,8 @@
 package org.joonzis.controller;
 
 import org.joonzis.domain.BoardVO;
+import org.joonzis.domain.Criteria;
+import org.joonzis.domain.PageDTO;
 import org.joonzis.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,9 +24,23 @@ public class BoardController {
 	
 	//전체 데이터 조회, /board/list, get
 	@GetMapping("/list")
-	public String list(Model model) {
-		log.info("list...");
-		model.addAttribute("list", service.getList());//=request.set 과같다
+	public String list(Criteria cri, Model model) {
+		log.info("list..." + cri);
+		//전에는 jsp에서 파라미터로 보냈다.
+		//서블릿에서 request.getParameter(pageNum);
+		//위 타입은 무조건 String
+		//그 때는 null로 예외처리
+		if(cri.getPageNum() == 0|| cri.getAmount()== 0) {
+			cri.setPageNum(1);
+			cri.setAmount(10);
+		}
+		//해당 페이지에 보여줄 데이터
+		model.addAttribute("list", service.getList(cri));//=request.set 과같다
+		//전체 게시글 수 가져오기
+		int total = service.getTotal();
+		log.info("total...." + total);
+		model.addAttribute("pageMaker", new PageDTO(cri, total));
+		
 		return "/board/list";
 	}
 	//게시글 등록 화면 이동

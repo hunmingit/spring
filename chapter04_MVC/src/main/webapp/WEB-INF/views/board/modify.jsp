@@ -31,7 +31,7 @@
 					<tr>
 						<th>내용</th>
 						<td>
-							<textarea rows="10" cols="76" name="content" >${vo.content }</textarea>
+							<textarea rows="10" cols="76" name="content" >${vo.content }</textarea><!--textarea는 여는 태그와 닫는 태그 사이의 내용 값-->
 						</td>
 					</tr>
 				</tbody>
@@ -46,5 +46,6 @@
 
 	<jsp:include page="../layout/footer.jsp"/>
 	<script type="text/javascript" src="/resources/js/modify.js"></script>	
+
 </body>
 </html>

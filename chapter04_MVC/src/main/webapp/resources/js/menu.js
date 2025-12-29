@@ -12,10 +12,35 @@ document.querySelectorAll('.header a') // a태크 가져오기
 		if(menu === 'mainPage'){
 			location.href = '/';
 		}else if(menu === 'boardList'){
-			location.href ='/board/list';
+			goBoardList();
 		}
 	});
 });
+//현재 페이지 정보를 브라우저의 localStorage에 저장
+function setStorageData(pageNum, amount){
+	let pageData = {
+			pageNum : pageNum,
+			amount : amount
+	};
+	localStorage.setItem('page_data', JSON.stringify(pageData));
+}
+function getStorageData(){
+	return JSON.parse(localStorage.getItem('page_data'));
+}
+//공통 함수 로 만든 목록으로 돌아가기
+function goBoardList(){
+	const pageData = getStorageData();
+
+	let pageNum = 1;
+	let amount  = 10;
+	if(pageData){
+		pageNum = pageData.pageNum;
+		amount  = pageData.amount;
+	}
+
+	location.href = `/board/list?pageNum=${pageNum}&amount=${amount}`;
+}
+
 
 function loginPage(){
 	

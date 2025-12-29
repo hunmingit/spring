@@ -27,13 +27,13 @@ public class BoardMapperTests {
 	@Autowired
 	private BoardMapper mapper;
 	//테스트라 해도 실제 데이터는 들어간다.
-	@Test
-	public void testGetList() {
-		List<BoardVO> list = mapper.getList();
-		for(BoardVO vo : list) {
-			log.info(vo);
-		}
-	}
+//	@Test
+//	public void testGetList() {
+//		List<BoardVO> list = mapper.getList();
+//		for(BoardVO vo : list) {
+//			log.info(vo);
+//		}
+//	}
 //	@Test
 //	public void testInsert() {
 //		int a;

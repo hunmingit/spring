@@ -20,9 +20,15 @@ document.querySelector('#resetBtn').addEventListener('click', ()=>{
 	f.reset();
 });
 //indexBtn 목록으로 이동
-document.querySelector('#indexBtn').addEventListener('click', ()=>{
-	location.href='/board/list';
-});
+const indexBtn = document.querySelector('#indexBtn');
+
+if(indexBtn){
+	indexBtn.addEventListener('click', e=>{		
+		goBoardList();
+	});
+}
+
+
 //registerBtn 새 게시글 등록
 document.querySelector('#registerBtn').addEventListener('click', ()=>{
 	register();

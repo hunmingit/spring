@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.joonzis</groupId>
 	<artifactId>controller</artifactId>
-	<name>chapter03_MVC</name>
+	<name>chapter04_MVC</name>
 	<packaging>war</packaging>
 	<version>1.0.0-BUILD-SNAPSHOT</version>
 	<properties>

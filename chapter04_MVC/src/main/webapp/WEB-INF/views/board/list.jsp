@@ -38,9 +38,30 @@
 				</c:forEach>
 			</tbody>
 		</table>
+		<!-- page -->
+		<div class="page-wrap">
+			<ul class="page-nation">
+				<c:if test="${pageMaker.prev }">
+					<li class="previous">
+						<a href="${pageMaker.startPage-1 }"> &lt; </a>
+					</li>
+				</c:if>
+				<c:forEach var="num" begin="${pageMaker.startPage }" end="${pageMaker.endPage }" step="1">
+					<li> <!---->
+						<a href="${num }" class="${pageMaker.cri.pageNum == num ? 'active' : '' }"> ${num } </a>
+					</li>
+				</c:forEach>
+				<c:if test="${pageMaker.next }">
+					<li><a href="${pageMaker.endPage+1 }"> &gt; </a></li>
+				</c:if>
+			</ul>
+		</div>
 	</div>
 	
 	<jsp:include page="../layout/footer.jsp"/>	
 	<script type="text/javascript" src="/resources/js/boardList.js"></script>
+	<script>
+	setStorageData(${pageMaker.cri.pageNum}, ${pageMaker.cri.amount});
+	</script>
 </body>
 </html>
