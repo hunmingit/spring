@@ -25,7 +25,7 @@ public class BoardController {
 	//전체 데이터 조회, /board/list, get
 	@GetMapping("/list")
 	public String list(Criteria cri, Model model) {
-		log.info("list..." + cri);
+		log.warn("list..." + cri);//info확인이 잘 안되면 warn으로 바꿔서 확인 
 		//전에는 jsp에서 파라미터로 보냈다.
 		//서블릿에서 request.getParameter(pageNum);
 		//위 타입은 무조건 String
