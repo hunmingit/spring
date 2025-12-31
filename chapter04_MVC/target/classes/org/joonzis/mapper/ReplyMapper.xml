@@ -15,7 +15,7 @@
 		 
 		<!-- 댓글 목록 -->
 		<select id="getList" parameterType="int" resultType="org.joonzis.domain.ReplyVO">
-			select * from tbl_reply where bno = #{bno} ORDER BY bno DESC
+			select * from tbl_reply where bno = #{bno} ORDER BY replydate DESC
 		</select>
 		
 		<!-- 댓글 삭제 -->

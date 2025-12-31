@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -64,6 +65,18 @@ public class ReplyController {
 	}
 	
 	//3. 삭제: /reply/:rno, delete 방식
+    @DeleteMapping(
+            value = "/{rno}",
+            produces = MediaType.TEXT_PLAIN_VALUE
+    )
+    public ResponseEntity<String> remove(@PathVariable int rno) {
+
+        log.info("delete reply : " + rno);
+
+        return service.delete(rno)
+                ? new ResponseEntity<>("success", HttpStatus.OK)
+                : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 	//4. 수정: /reply/:rno, PUT or PATCH 방식
 	//5. 전체 댓글 : /reply/pages/:bno, get 방식
 }
