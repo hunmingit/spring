@@ -47,12 +47,13 @@ public class ReplyController {
 	}
 	//2. 조회	: /reply/:rno(URL 자체가 자원(Resource)을 식별), get방식
 	@GetMapping(
+			//url 예시 /reply/10
 			value = "/{rno}",
 			produces = {
 					MediaType.APPLICATION_JSON_UTF8_VALUE,
 					MediaType.APPLICATION_XML_VALUE
 			}
-	)
+	)//URL의 {rno} 값을 꺼냄
 	public ResponseEntity<ReplyVO> read(@PathVariable("rno") int rno) {
 
 	    log.info("get reply rno : " + rno);
