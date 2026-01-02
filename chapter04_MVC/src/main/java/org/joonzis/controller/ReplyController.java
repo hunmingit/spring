@@ -49,6 +49,7 @@ public class ReplyController {
 	@GetMapping(
 			//url 예시 /reply/10
 			value = "/{rno}",
+			//서버가 어떤 형식으로 응답할 수 있는지 선언 클라이언트가 요청 헤더에 Accept: application/json 이면 → JSON 응답
 			produces = {
 					MediaType.APPLICATION_JSON_UTF8_VALUE,
 					MediaType.APPLICATION_XML_VALUE
