@@ -24,7 +24,7 @@ public class ReplyController {
 	@Autowired // 의존성 주입 : 객체를 내가 만들지 않고, 스프링이 대신 만들어서 넣어주는 것
 	///ReplyController는 댓글을 DB에 저장하는 기능이 필요 ReplyService가 필요하긴 한데 어떤 구현체인지는 몰라도 됨
 	private ReplyService service;
-	//비동기로 할꺼임 fetch 사용
+	//비동기로 진행 fetch 사용
 	//1. 등록 : /reply/new - POST
 	@PostMapping(value = "/new",
 /*수신 데이터 포맷
