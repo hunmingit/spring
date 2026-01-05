@@ -29,4 +29,50 @@ function modify() {
 	location.href = `/board/modify?bno=${bno}`;
 }
 
+/*-------------------댓글------------------------------*/
+const rs = replyService; // reply.js에서 CRUD 담당 객체
+//console.log(rs)
+//rs.add(
+//		{
+//			bno : f.bno.value,
+//			reply : 'js test',
+//			replyer : 'tester'
+//		}, 
+//		function(result){
+//			console.log(result);			
+//		}
+//);
+//rs.getList(f.bno.value, function(data){
+//	console.log(data);
+//})
+//rs.remove(21, function(result){
+//	console.log(result)
+//})
+//rs.update(
+//		 {
+//			reply : 'js test11',
+//		}, 
+//		4,
+//			function(result){
+//			console.log(result);			
+//			}
+//);	
+//rs.get(4, function(data){
+//	console.log(data);
+//})
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
