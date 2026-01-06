@@ -45,11 +45,10 @@ const replyService = (function () {
 	         .catch(err => console.log(err));
    }
    
-   function update(reply, rno, callback){
+   function update(reply, callback){
 		   fetch(`/reply/${rno}`, {
-				  /*HTTP POST 방식 댓글 수정은 데이터 생성이므로 put*/
 		         method : 'put',
-		     /*요청 바디 : js객체는 그대로 못보내므로 json으로 문자열 변환*/
+		     /*요청 바디 :reply는 body에서 보내고 rno는 url에 담아 보낸다 js객체는 그대로 못보내므로 json으로 문자열 변환*/
 		         body : JSON.stringify(reply),
 		      /*요청 헤더 : 서버에게 지금 보내는 데이터는 json이라는걸 알려줌*/   
 		         headers : {
