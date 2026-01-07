@@ -7,10 +7,10 @@
 	<select id="getList" resultType="org.joonzis.domain.BoardVO">
 	<!-- <, > 들어가면 CDATA 사용 -->
 		<![CDATA[ 
-		SELECT bno, writer, title, regdate 
+		SELECT bno, writer, title, regdate, replycnt
 		from (Select ROWNUM rn, a.* 
 			from
-			(Select bno, writer, title, regdate 
+			(Select bno, writer, title, regdate, replycnt 
 			from tbl_board order by bno desc) a
 			where ROWNUM <= #{pageNum} * #{amount})
 			where rn > (#{pageNum}-1) * #{amount}
@@ -40,5 +40,13 @@
 		set title = #{title}, content= #{content}, writer= #{writer}, updatedate = sysdate
 		where bno = #{bno}
 	</update>
+	<!-- 댓글 수 증가, 감소 -->
+	<update id="updateReplyCnt">
+		update tbl_board
+		set replycnt = replycnt + #{amount}
+		where bno = #{bno}	
+	</update>
+
+	
 	
 </mapper>

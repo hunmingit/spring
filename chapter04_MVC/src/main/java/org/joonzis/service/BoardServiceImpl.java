@@ -53,6 +53,12 @@ public class BoardServiceImpl implements  BoardService {
       log.info("modify..." + vo);
       return mapper.update(vo) == 1;
    }
-
+   @Override
+   public void updateReplyCnt(int bno, int amount) {
+	   
+      log.info("updateReplyCnt..." + bno + ", " + amount);
+      mapper.updateReplyCnt(bno, amount);
+            
+   }
       
 }

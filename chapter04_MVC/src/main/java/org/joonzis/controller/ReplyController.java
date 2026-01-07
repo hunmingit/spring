@@ -48,6 +48,7 @@ public class ReplyController {
 		return insertCount == 1 ?
 /*성공 → 200 OK + success*/				new ResponseEntity<String>("success", HttpStatus.OK) :
 /*실패 -> 500 Internal Server Error*/		new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+
 	}
 	//2. 조회	: /reply/:rno(URL 자체가 자원(Resource)을 식별), get방식, 댓글 단 건 조회
 	@GetMapping(

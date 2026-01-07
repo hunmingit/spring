@@ -26,5 +26,7 @@ public interface BoardService {
 	//데이터 수정
 	public boolean modify(BoardVO vo);
 	
+	//댓글 개수 변경
+	public void updateReplyCnt(int bno, int amount);
 	
 }
