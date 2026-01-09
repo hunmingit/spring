@@ -15,4 +15,6 @@ public interface ReplyService {
 	public boolean delete(int rno);
 	//댓글 수정
 	public boolean update(ReplyVO vo);
+	//특정 게시물의 댓글 삭제
+	public void deleteByBno(int bno);
 }

@@ -39,6 +39,21 @@ function register(){
 		alert("빈 값을 확인하세요")
 		return;
 	}
+	let str = ``;
+	let liElements = document.querySelectorAll(`.uploadResult ul li`);
+
+	liElements.forEach((li, index)=>{	
+		let path = li.getAttribute('path');
+		let uuid = li.getAttribute('uuid');
+		let fileName = li.getAttribute('fileName');
+
+		str += `<input type="hidden" name="attachList[${index}].uploadPath" value="${path}"/>`;
+		str += `<input type="hidden" name="attachList[${index}].uuid" value="${uuid}"/>`;
+		str += `<input type="hidden" name="attachList[${index}].fileName" value="${fileName}"/>`;		
+	});
+	f.insertAdjacentHTML('beforeend', str);
+	
+	//form 내용을 post 전송
 	f.action = '/board/register';
 	f.submit();
 	

@@ -37,15 +37,23 @@ function modify() {
 }
 //삭제 데이터의 변환이 있을때는 post 방식
 function remove() {
-	const bonEle = f.bno; //bno를 담고 있는 
-	f.innerHTML = ''; //form 태그 비우기
-	f.appenChild(bnoEle);
-	f.action = 'board/remove';
+	if (!confirm('게시글을 삭제하시겠습니까?')) {
+		return;
+	}
+	f.action = '/board/remove';
+	f.method = 'post';
 	f.submit();
+//  form 방식으로 보낼지, URL 파라미터로 보낼지
+//	const bonEle = f.bno; //bno를 담고 있는 
+//	f.innerHTML = ''; //form 태그 비우기
+//	f.appenChild(bnoEle);
+//	f.action = 'board/remove';
+//	f.submit();
 //	console.log('remove');
 //	let bno = f.bno.value;
-//	f.action = `/board/remove?bno=${bno}`;
+//	f.action = `/board/remove?bno=${bno}`; //삭제 요청을 URL + GET으로 보내면 안된다.
 //	f.submit();
 }
+
 
 

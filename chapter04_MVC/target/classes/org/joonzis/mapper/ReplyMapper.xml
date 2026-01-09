@@ -35,4 +35,8 @@
 			select * FROM tbl_reply where rno = #{rno}
 		</select>
 		
+		<!-- 특정 게시물의 댓글 삭제 -->
+		<delete id="deleteByBno" parameterType="int">
+			delete from tbl_reply where bno = #{bno}
+		</delete>
 </mapper>

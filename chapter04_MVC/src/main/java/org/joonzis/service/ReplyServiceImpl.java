@@ -72,5 +72,10 @@ public class ReplyServiceImpl implements ReplyService{
 	      log.info("update..." + vo);
 	      return mapper.update(vo) == 1;
 	}
-	
+	//특정 게시물의 댓글 삭제
+	@Override
+	public void deleteByBno(int bno) {
+		log.info("deleteByBno..." + bno);
+		mapper.deleteByBno(bno);
+	}
 }

@@ -51,6 +51,7 @@ public class BoardController {
 	@PostMapping("/register")
 	public String register(BoardVO vo) {
 		log.info("register..."+vo);
+
 		service.register(vo);
 		//rttr.addFlashAttribute("result", "success"); //리다이렉트에 데이터 던질때 사용 request.set과 같다 위에서는 ${result}이렇게 사용
 		return "redirect:/board/list"; //리다이렉트는 이렇게 붙이면 가짐

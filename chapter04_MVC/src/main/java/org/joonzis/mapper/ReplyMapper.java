@@ -15,4 +15,6 @@ public interface ReplyMapper {
 	public int delete(int rno);
 	//댓글 수정
 	public int update(ReplyVO vo);
+	//특정 게시물의 댓글 삭제
+	public int deleteByBno(int bno);
 }

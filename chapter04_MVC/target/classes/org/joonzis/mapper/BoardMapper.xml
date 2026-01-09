@@ -22,10 +22,16 @@
 	</select>
 	
 	
-	<insert id="insert" parameterType="org.joonzis.domain.BoardVO"> <!-- regdate, updatedate default값 sysdate로 정해져있어서 안넣어됨 -->
-		insert into tbl_board (bno, title, content, writer, regdate)
-				values(seq_board.nextval, #{title}, #{content}, #{writer}, sysdate)
-	</insert>
+	<insert id="insert" parameterType="org.joonzis.domain.BoardVO"> <!-- regdate, updatedate default값 sysdate로 정해져있어서 안넣어도됨 -->
+<!-- selectKey를 사용한다면 insert문에서는 시퀀스를 절대 다시 호출하면 안 된다. -->	
+<!-- insert 실행 전에 PK를 내가 미리 만들어서 VO에 넣어두겠다. --> 
+<!-- DUAL을 이용해서 시퀀스(seq_board)의 다음 값(NEXTVAL)을 조회하고 그 값을 BoardVO.bno에 담아서 insert에 사용한다.--> 
+	  <selectKey keyProperty="bno" order="BEFORE" resultType="int">
+			    SELECT seq_board.NEXTVAL FROM dual
+	  </selectKey>		
+				insert into tbl_board (bno, title, content, writer, regdate)
+				values(#{bno}, #{title}, #{content}, #{writer}, sysdate)
+	</insert>	
 	
 	<select id="read"  parameterType="int" resultType="org.joonzis.domain.BoardVO">
 		select * FROM tbl_board where bno = #{bno}
