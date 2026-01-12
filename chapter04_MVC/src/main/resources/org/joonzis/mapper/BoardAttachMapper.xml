@@ -8,11 +8,20 @@
 						values(#{bno}, #{uuid}, #{uploadPath}, #{fileName})
 	</insert>
 	
-	<delete id="delete">
-		delete FROM tbl_attach where UUID = #{uuid}
-	</delete>
 
 	<select id="findByBno" resultType="org.joonzis.domain.BoardAttachVO">	
 		SELECT * from tbl_attach where bno=#{bno}
 	</select>
+	
+	<select id="findByUuid" resultType="org.joonzis.domain.BoardAttachVO">
+	    SELECT * FROM tbl_attach
+	    WHERE uuid = #{uuid}
+	</select>
+
+	<delete id="deleteByUuid">
+	    DELETE FROM tbl_attach
+	    WHERE uuid = #{uuid}
+	</delete>
+	
+	
 </mapper>

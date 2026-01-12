@@ -6,6 +6,10 @@ import org.joonzis.domain.BoardAttachVO;
 
 public interface BoardAttachMapper {
 	public int insert(BoardAttachVO vo);
-	public int delete(String uuid);
+
 	public List<BoardAttachVO> findByBno(int bno);
+	
+	public BoardAttachVO findByUuid(String uuid);
+
+	public int deleteByUuid(String uuid);
 }

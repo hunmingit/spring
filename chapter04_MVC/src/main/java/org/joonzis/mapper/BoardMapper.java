@@ -23,10 +23,6 @@ public interface BoardMapper {
 	//댓글 데이터 변경 
 	public void updateReplyCnt(@Param("bno") int bno, @Param("amount")int amount);
 	
-	//1. 위  updateReplyCnt 메소드에 해당하는 쿼리 작성
-	//2. 댓글 삽입 / 삭제 시 updateReplyCnt메서드 실행
-	//3. 게시글 리스트에서 댓글 개수 변경 확인
-	
 	
 	
 }

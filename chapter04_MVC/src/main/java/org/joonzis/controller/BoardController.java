@@ -1,16 +1,25 @@
 package org.joonzis.controller;
 
+import java.util.List;
+
+import org.joonzis.domain.BoardAttachVO;
 import org.joonzis.domain.BoardVO;
 import org.joonzis.domain.Criteria;
 import org.joonzis.domain.PageDTO;
 import org.joonzis.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.extern.log4j.Log4j;
@@ -80,12 +89,28 @@ public class BoardController {
 	}
 	//수정
 	@PostMapping("/modify")
-	public String modify(BoardVO vo, RedirectAttributes rttr) {
-		log.info("modify..."+vo);
-		if(service.modify(vo)) {
-			rttr.addFlashAttribute("result", "success");
-		}
-		return "redirect:/board/list";
+	public String modify(BoardVO vo, 
+			@RequestParam(value = "uploadFile", required = false)
+			MultipartFile[] uploadFiles,
+			@RequestParam(required = false) List<String> deleteFiles, 
+			RedirectAttributes rttr) {
+			log.info("modify..."+vo);
+			log.info("deleteFiles..." + deleteFiles);
+			
+
+	    service.modify(vo, deleteFiles);  
+
+	    rttr.addFlashAttribute("result", "success");
+	    return "redirect:/board/list";
+	}
+	
+	//첨부파일 리스트 가져오기
+	@ResponseBody
+	@GetMapping(value = "/getAttachList/{bno}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<List<BoardAttachVO>> getAttachList(@PathVariable("bno") int bno) {
+		log.info("getAttachList..." + bno);
+		return new ResponseEntity<List<BoardAttachVO>>(service.getAttachList(bno), HttpStatus.OK);
+	   
 	}
 	
 	

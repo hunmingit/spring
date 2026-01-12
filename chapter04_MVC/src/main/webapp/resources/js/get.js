@@ -216,9 +216,40 @@ function removeReply() {
 
 }
 
+//-------------------------------첨부 파일 관련 스크립트
+//파일 리스트 콘솔에 출력
+(function() {
+	fetch(`/board/getAttachList/${f.bno.value}`)
+	.then(response => response.json())
+	.then(data => {
+		showUploadedFile(data);
+	})
+	.catch(err => console.log(err));
+})(); 
 
-
-
+let uploadResult = document.querySelector('.uploadResult ul');//업로드된 파일 목록을 출력할 <ul> 요소 선택
+//서버에서 받은 파일 정보 배열(JSON)을 받아 화면에 출력하는 함수
+function showUploadedFile(uploadResultArr){
+	//<li> HTML 문자열을 누적할 변수
+	let str = ``;
+	//업로드된 파일 하나씩 반복 처리
+	uploadResultArr.forEach( file => {
+		//str += `<li>${file.fileName}</li>`; //파일 이름 뿌리기 
+		//이름 클릭하여 다운로드 가능하게
+		//서버에 실제 저장된 파일 상대 경로
+		//encodeURIComponent -> 한글, 공백, 특수문자 깨짐 방지, URL 파라미터로 안전하게 전송
+		let fileCallPath = encodeURIComponent(
+				file.uploadPath + "/" + file.uuid + "_" + file.fileName
+		); // ->fileCallPath = 2026/01/08/uuid_test.jpg 
+		str +=`<li path="${file.uploadPath}" uuid="${file.uuid}" fileName="${file.fileName}">`;
+		str +=`<a href="/download?fileName=${fileCallPath}">`;//클릭 시 /download 컨트롤러로 요청
+		str +=`${file.fileName}`; //사용자에게 보여줄 원본 파일명
+		str +=`</a>`;
+//		str +=`<span data-file="${fileCallPath}">  x</span>`;//삭제 버튼 역할
+		str +=`</li>`;
+	});
+	uploadResult.innerHTML = str;
+}
 //console.log(rs)
 //rs.add(
 //		{

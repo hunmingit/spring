@@ -1,7 +1,10 @@
 package org.joonzis.service;
 
+import java.io.File;
+
 import java.util.List;
 
+import org.joonzis.domain.BoardAttachVO;
 import org.joonzis.domain.BoardVO;
 import org.joonzis.domain.Criteria;
 import org.joonzis.mapper.BoardAttachMapper;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.log4j.Log4j;
+
 
 
 @Log4j
@@ -65,7 +69,6 @@ public class BoardServiceImpl implements  BoardService {
             attachMapper.insert(attach);
          });
       }
-
    }
 
    @Override
@@ -82,7 +85,6 @@ public class BoardServiceImpl implements  BoardService {
       //왜 ReplyService를 안 쓰고 ReplyMapper를 직접 쓰나 해도 되지만 지금 구조에서는 충분(귀찬ㄶ)
       replyMapper.deleteByBno(bno); //댓글 먼저 삭제(bno)에 달린 모든 댓글 삭제, 게시글만 삭제되면  고아 댓글 발생
       return mapper.delete(bno) == 1;
-
    }
 
    @Override
@@ -90,12 +92,70 @@ public class BoardServiceImpl implements  BoardService {
       log.info("modify..." + vo);
       return mapper.update(vo) == 1;
    }
+   
    @Override
    public void updateReplyCnt(int bno, int amount) {
 	   
       log.info("updateReplyCnt..." + bno + ", " + amount);
-      mapper.updateReplyCnt(bno, amount);
-            
+      mapper.updateReplyCnt(bno, amount);            
+   }
+   @Override
+	public List<BoardAttachVO> getAttachList(int bno) {
+	   log.info("getAttachList..." + bno);
+		return attachMapper.findByBno(bno);
+	}
+   @Transactional
+   @Override
+   public void modify(BoardVO vo, List<String> deleteFiles) {
+
+       log.info("modify with files...");
+
+       // 1️. 게시글 수정 (기존 로직 재사용)
+       boolean updated = modify(vo);
+
+       if (!updated) {
+           throw new RuntimeException("게시글 수정 실패");
+       }
+       int bno = vo.getBno();
+       // 2️. 첨부파일 삭제
+       if (deleteFiles != null && !deleteFiles.isEmpty()) {
+           deleteFiles.forEach(this::removeAttach);
+       }
+       
+       //3. 새로 추가된 첨부파일 insert
+       if (vo.getAttachList() != null && !vo.getAttachList().isEmpty()) {
+           vo.getAttachList().forEach(attach -> {
+               attach.setBno(bno);
+               attachMapper.insert(attach);
+           });
+       }
+   }
+   
+   @Override
+   public void removeAttach(String uuid) {
+       log.info("removeAttach uuid = " + uuid);
+
+       // 1️. DB에서 첨부파일 정보 조회
+       BoardAttachVO attach = attachMapper.findByUuid(uuid);
+
+       if (attach == null) {
+           return;
+       }
+
+       // 2️. 실제 파일 삭제
+       try {
+           File file = new File(
+               "C:/upload/" + attach.getUploadPath() + "/" +
+               attach.getUuid() + "_" + attach.getFileName()
+           );
+           file.delete();
+
+       } catch (Exception e) {
+           throw new RuntimeException(e);
+       }
+
+       // 3️. DB 삭제
+       attachMapper.deleteByUuid(uuid);
    }
       
 }

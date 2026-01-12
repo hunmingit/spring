@@ -13,7 +13,10 @@
 		<h1>게시글/수정 화면</h1>
 	</div>
 	<div class="panel-body">
-		<form method="POST">
+		<form id="modifyForm"
+		      method="post"
+		      action="/board/modify"
+		      enctype="multipart/form-data">
 			<table>
 				<tbody>
 					<tr>
@@ -36,12 +39,28 @@
 					</tr>
 				</tbody>
 			</table>
-		</form>
+		   	<!-- 파일 첨부 영역 -->
+	<div class="file-container">
+	   <div class="file-header">
+	      <div class="file-title">
+	         <a>파일 첨부</a>
+	      </div>                                                                                                       
+	   </div>
+	   <div class="file-body">
+	   	      <div class="uploadDiv">
+	         <input type="file" name="uploadFile" multiple="multiple">
+	      </div>
+	      <div class="uploadResult">
+	         <ul></ul>
+	      </div>
+	   </div>
+	</div>
 		<div class="panel-body-btns">
 			<button type="button" class="btn btn-sec" id="modifyBtn">수정</button>
 			<button type="button" class="btn btn-thi" id="removeBtn">삭제</button>
 			<button type="button" class="btn btn-fir" id="indexBtn">목록으로 이동</button>
 		</div>
+		</form>
 	</div>
 
 	<jsp:include page="../layout/footer.jsp"/>

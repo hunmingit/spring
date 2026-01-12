@@ -50,7 +50,8 @@ document.querySelector('input[type="file"]').addEventListener('change', ()=>{
 			console.log(data);
 			//보내면 비운다.
 			inputFile.value = '';
-			showUploadedFile(data);
+			//성공하면 실행해서 목록 보여준다.
+			showUploadedFile(data);	
 		})
 		.catch(err => console.log(err));
 	
