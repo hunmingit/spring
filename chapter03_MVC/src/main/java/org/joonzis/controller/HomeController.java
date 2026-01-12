@@ -26,7 +26,7 @@ public class HomeController {
 	 * Simply selects the home view to render by returning its name.
 	 */
 	//@RequestMapping : url-mapping
-	//메소드를 대상으로 어노테이션으 붙인다.
+	//메소드를 대상으로 어노테이션으 붙임.
 	//value="/" : 컨텍스트 패스를 의미, 서버 : 포트번호/디폴트패키지
 	//method = RequestMethod.GET : get/post 방식
 	
@@ -62,7 +62,7 @@ public class HomeController {
 	@RequestMapping("/a/b/c/d/e")
 	public String goView01() {
 		//1. 리턴 타입 : 뷰(view)를 리턴하기 때문에 언제나 String
-		//2. 메소드명 : goView01은 아무 의미가 없다(메소드끼리 이름만 다르면 된다.)
+		//2. 메소드명 : goView01은 아무 의미가 없다(메소드끼리 이름만 다르면 됨)
 		//3. 리턴 : "/view01", "view01"의 차이점은 없다
 		return "/view01";
 	}
