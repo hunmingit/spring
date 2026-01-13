@@ -162,11 +162,13 @@ function showExistingFiles(uploadResultArr){
 		});
 	});
 }
+//실제 파일 업로드 이벤트
 document.querySelector('input[type="file"]').addEventListener('change', () => {
     const inputFile = document.querySelector('input[type="file"]');
     const files = inputFile.files;
 
     if(files.length === 0) return;
+    console.log(files)//FileList {0: File, 1: File, length: 2} 이렇게 출력
     // 1. 기존 파일 전부 삭제 대상으로 이동
     deleteFileList = [...originFileList];
 

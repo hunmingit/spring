@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:security="http://www.springframework.org/schema/security"
+   xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+      http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+   
+   <!-- Bean -->
+   <bean id="customAccessDenied" 
+   class="org.joonzis.security.CustomAccessDeniedHandler"></bean>
+   
+   
+   <!-- HTTP 통신 보안 구성 요소 -->
+   <security:http auto-config="true">
+   		<!-- permitAll 기본 권한-->
+   		<security:intercept-url pattern="/sample/all" access="permitAll"/>
+   		<!-- hasRole() ROLE_MEMBER 권한이 있는지 체크하는 함수 -->
+ 		<security:intercept-url pattern="/sample/member" access="hasRole('ROLE_MEMBER')"/>
+ 		<security:intercept-url pattern="/sample/admin" access="hasRole('ROLE_ADMIN')"/>
+  		
+      <security:form-login/>
+      <!-- access제한됐을 때 이 경로로 가겠다.지금은 CommonController컨트롤러로 이동 -->
+     <!--<security:access-denied-handler error-page="/accessError"/> --> 
+      <security:access-denied-handler ref="customAccessDenied"/>
+      
+   </security:http>
+   
+   <!-- 사용자 인증 관리 -->
+   <security:authentication-manager>
+   		<security:authentication-provider>
+   			<security:user-service><!-- 계정 정보 임시로 만듬 {noop}은 자체 인코딩 암호화 authorities 는  권한 들 -->
+   			<!-- 로그인 정보로 로그인 하게 되면 member.jsp로 정상적으로 이동된다. -->
+   			<!-- 로그아웃 버튼 설정이 없으므로 쿠키에서 삭제 시키고 새로고침 하면 다시 로그인 화면으로 이동된다. -->
+   			<!-- member 계정으로 admin 로그인 하면 403 forbidden 에러 출력됨  -->
+   			<!-- 하지만 실제 웹사이트는 권한 관련도 404로 출력하게 한다. -->
+   				<security:user name="member" password="{noop}member" authorities="ROLE_MEMBER"/>
+   				<security:user name="admin" password="{noop}admin" authorities="ROLE_MEMBER, ROLE_ADMIN"/>
+   			</security:user-service>
+   		</security:authentication-provider>
+   </security:authentication-manager>
+</beans>
