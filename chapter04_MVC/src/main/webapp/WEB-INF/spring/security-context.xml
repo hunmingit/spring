@@ -6,36 +6,60 @@
       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
    
    <!-- Bean -->
+   <!-- 접근 권한이 없을 때(403) 내가 만든 CustomAccessDeniedHandler 실행 -->
    <bean id="customAccessDenied" 
    class="org.joonzis.security.CustomAccessDeniedHandler"></bean>
-   
+   <!-- 로그인 성공했을 때 권한별 리다이렉트 등 후처리 담당 -->
+   <bean id="customLoginSuccess" 
+   class="org.joonzis.security.CustomLoginSuccessHandler"></bean>
+   <!-- password 인코딩 -->
+   <!-- 비밀번호 암호화 객체 DB에 저장된 BCrypt 비밀번호와 로그인 입력값 비교 -->
+   <!-- mybatis가 이빈이 있으면 자동으로 만들어준다. -->
+   <bean id="bcryptPasswordEncoder" 
+   class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></bean>
    
    <!-- HTTP 통신 보안 구성 요소 -->
    <security:http auto-config="true">
    		<!-- permitAll 기본 권한-->
    		<security:intercept-url pattern="/sample/all" access="permitAll"/>
    		<!-- hasRole() ROLE_MEMBER 권한이 있는지 체크하는 함수 -->
- 		<security:intercept-url pattern="/sample/member" access="hasRole('ROLE_MEMBER')"/>
+ 		<security:intercept-url pattern="/sample/member" access="hasRole('ROLE_MENAGER')"/>
  		<security:intercept-url pattern="/sample/admin" access="hasRole('ROLE_ADMIN')"/>
   		
-      <security:form-login/>
+     <!-- <security:form-login/> 기존 로그인 페이지를 커스텀 하기위해 주석처리하고 밑 코드로 설정-->
+      <security:form-login 
+      login-page="/customLogin"
+      authentication-success-handler-ref="customLoginSuccess"/>
+      <security:logout
+      logout-url="/customLogout"
+      invalidate-session="true"/>
+      
       <!-- access제한됐을 때 이 경로로 가겠다.지금은 CommonController컨트롤러로 이동 -->
      <!--<security:access-denied-handler error-page="/accessError"/> --> 
       <security:access-denied-handler ref="customAccessDenied"/>
       
+      <security:csrf disabled="true"/>
    </security:http>
+   
    
    <!-- 사용자 인증 관리 -->
    <security:authentication-manager>
    		<security:authentication-provider>
-   			<security:user-service><!-- 계정 정보 임시로 만듬 {noop}은 자체 인코딩 암호화 authorities 는  권한 들 -->
+   		<!-- db에 있는 계정 정보를 가져온다. -->
+   			<security:jdbc-user-service data-source-ref="dataSource"
+   			users-by-username-query="select userid, userpw, 1 from tbl_member where userid=?"
+   			authorities-by-username-query="select userid, auth from tbl_member_auth where userid=?"/>
+   			<security:password-encoder ref="bcryptPasswordEncoder"/>
+   			
+   			  			
+   			<!-- 계정 정보 임시로 만듬 {noop}은 자체 인코딩 암호화 authorities 는  권한 들 -->
    			<!-- 로그인 정보로 로그인 하게 되면 member.jsp로 정상적으로 이동된다. -->
    			<!-- 로그아웃 버튼 설정이 없으므로 쿠키에서 삭제 시키고 새로고침 하면 다시 로그인 화면으로 이동된다. -->
    			<!-- member 계정으로 admin 로그인 하면 403 forbidden 에러 출력됨  -->
    			<!-- 하지만 실제 웹사이트는 권한 관련도 404로 출력하게 한다. -->
-   				<security:user name="member" password="{noop}member" authorities="ROLE_MEMBER"/>
-   				<security:user name="admin" password="{noop}admin" authorities="ROLE_MEMBER, ROLE_ADMIN"/>
-   			</security:user-service>
+   				<!-- <security:user name="member" password="{noop}member" authorities="ROLE_MEMBER"/>
+   				<security:user name="admin" password="{noop}admin" authorities="ROLE_MEMBER, ROLE_ADMIN"/> -->
+   			
    		</security:authentication-provider>
    </security:authentication-manager>
 </beans>

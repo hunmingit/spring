@@ -7,6 +7,11 @@
 <title>Insert title here</title>
 </head>
 <body>
-
+	<h1>custom logout page</h1>
+	<form action="/customLogout" method="post">
+		<button>로그아웃</button>
+		
+	
+	</form>
 </body>
 </html>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.joonzis.mapper.MemberMapper">
+	<resultMap type="org.joonzis.domain.MemberVO" id="memberMap">
+		<result property="userId" column="userId"/>
+		<result property="userPw" column="userPw"/>
+		<result property="userName" column="userName"/>
+		<result property="regDate" column="regDate"/>
+		<result property="updateDate" column="updateDate"/>
+		<result property="enabled" column="enabled"/>
+		<!-- MemberVO 안의 List<AuthVO> authList; -->
+		<collection property="authList" resultMap="authMap"></collection>
+	</resultMap>
+	
+	<resultMap type="org.joonzis.domain.AuthVO" id="authMap">
+		<result property="userId" column="userId"/>
+		<result property="auth" column="auth"/>
+	</resultMap>
+	
+	<!-- 회원 1명 정보를 담는 MemberVO, 그 안에 권한 목록(authList) 까지 포함 -->
+	<select id="read" resultMap="memberMap">
+		SELECT 
+			mem.*, auth.auth 
+		from 
+			tbl_member mem LEFT join tbl_member_auth auth 
+		on 
+			mem.userid = auth.userid
+		where 
+			mem.userid=#{userId}	
+	</select>
+	
+	
+</mapper>

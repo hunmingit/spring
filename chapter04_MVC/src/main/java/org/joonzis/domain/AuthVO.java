@@ -1,0 +1,12 @@
+package org.joonzis.domain;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor //기본 생성자 자동 생성 public BoardVO() {}
+@AllArgsConstructor //모든 필드를 받는 생성자 생성
+@Data //getter setter 자동 생성
+public class AuthVO {
+	private String userId, auth;
+}
