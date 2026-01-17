@@ -8,7 +8,7 @@ import org.joonzis.domain.Criteria;
 
 //dao 역할
 public interface BoardMapper {
-	// 전체 리스트 
+	// 전체 리스트 get 
 	public List<BoardVO> getList(Criteria cri);
 	//전체 게시글 수(페이징)
 	public int getTotal();
