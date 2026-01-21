@@ -59,7 +59,7 @@ public class ReplyController {
 					MediaType.APPLICATION_JSON_VALUE,
 					MediaType.APPLICATION_XML_VALUE
 			}
-	)//URL의 {rno} 값을 꺼냄
+	)//URL의 {rno} 값을 꺼냄.
 	public ResponseEntity<ReplyVO> read(@PathVariable("rno") int rno) {
 
 	    log.info("get reply rno : " + rno);
