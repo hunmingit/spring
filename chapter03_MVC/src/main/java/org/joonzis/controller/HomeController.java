@@ -27,7 +27,7 @@ public class HomeController {
 	 */
 	//@RequestMapping : url-mapping
 	//메소드를 대상으로 어노테이션으 붙임.
-	//value="/" : 컨텍스트 패스를 의미, 서버 : 포트번호/디폴트패키지
+	//value="/" : 컨텍스트 패스를 의미한다, 서버 : 포트번호/디폴트패키지
 	//method = RequestMethod.GET : get/post 방식
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
