@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  root-context.xml
+  - DispatcherServlet 과 무관한 공통 Bean 설정
+  - DB, MyBatis, Transaction, Service, AOP 등
+  - 애플리케이션 전역에서 공유되는 인프라 설정
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+		http://mybatis.org/schema/mybatis-spring
+		http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans
+		https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+	<!-- =====================================================
+	     [1] 공통 비밀번호 암호화 Bean
+	     ===================================================== -->
+	<!--
+	  BCryptPasswordEncoder
+	  - 회원가입 / 로그인 시 비밀번호 암호화
+	  - Spring Security 와 연동 가능
+	-->
+	<bean id="passwordEncoder"
+		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+	<!-- =====================================================
+	     [2] DB 연결 설정 (HikariCP + log4jdbc)
+	     ===================================================== -->
+	<!--
+	  HikariCP 설정 Bean
+	  - 커넥션 풀 설정
+	  - log4jdbc 적용으로 SQL 로그 출력
+	-->
+	<bean id="hikariConfig"
+		class="com.zaxxer.hikari.HikariConfig">
+
+		<!--
+		  JDBC Driver
+		  - log4jdbc DriverSpy 사용
+		  - 실행되는 SQL을 로그로 확인 가능
+		-->
+		<property name="driverClassName"
+			value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy"/>
+
+		<!--
+		  Oracle DB 접속 URL
+		-->
+		<property name="jdbcUrl"
+			value="jdbc:log4jdbc:oracle:thin:@localhost:1521:XE"/>
+
+		<!--
+		  DB 계정 정보
+		-->
+		<property name="username" value="scott"/>
+		<property name="password" value="tiger"/>
+	</bean>
+
+	<!--
+	  실제 DataSource Bean
+	  - HikariConfig 를 기반으로 생성
+	  - 애플리케이션 종료 시 close() 호출
+	-->
+	<bean id="dataSource"
+		class="com.zaxxer.hikari.HikariDataSource"
+		destroy-method="close">
+		<constructor-arg ref="hikariConfig"/>
+	</bean>
+
+	<!-- =====================================================
+	     [3] MyBatis 설정
+	     ===================================================== -->
+	<!--
+	  SqlSessionFactory
+	  - MyBatis 핵심 객체
+	  - DB 연결(DataSource)과 연동
+	-->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	    <property name="dataSource" ref="dataSource"/>
+	    <property name="mapperLocations" value="classpath*:org/hati/mapper/**/*.xml"/>
+	</bean>
+
+	<!--
+	  Mapper 인터페이스 자동 스캔
+	  - @Mapper 없이도 MyBatis Mapper 인식
+	-->
+	<mybatis-spring:scan base-package="org.hati"/>
+	
+	<!-- =====================================================
+	     [5] 트랜잭션 관리 설정
+	     ===================================================== -->
+	<!--
+	  트랜잭션 매니저
+	  - DataSource 기반 트랜잭션 처리
+	  - @Transactional 과 연동
+	-->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+
+	<!--
+	  어노테이션 기반 트랜잭션 활성화
+	  - @Transactional 사용 가능
+	-->
+	<tx:annotation-driven/>
+
+	<!-- =====================================================
+	     [6] AOP 설정
+	     ===================================================== -->
+	<!--
+	  AOP 관련 클래스 스캔
+	  - @Aspect 적용 클래스 대상
+	-->
+	<context:component-scan base-package="org.hati"/>
+
+	<!--
+	  AspectJ 기반 AOP 활성화
+	  - 메서드 실행 전/후 공통 로직 처리
+	-->
+	<aop:aspectj-autoproxy/>
+		
+</beans>

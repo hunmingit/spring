@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  servlet-context.xml
+  - DispatcherServlet 전용 설정 파일
+  - Controller, ViewResolver, Static Resource, Multipart 처리 담당
+  - 웹 요청(Request/Response) 처리 계층 설정
+-->
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/security
+		http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/mvc
+		https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans
+		https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+		https://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- =====================================================
+	     DispatcherServlet Context
+	     - 웹 요청을 처리하는 MVC 전용 설정 영역
+	     ===================================================== -->
+	<!--
+	  Spring MVC Annotation 기반 설정 활성화
+	  - @Controller
+	  - @RequestMapping
+	  - @GetMapping / @PostMapping
+	  - @ResponseBody
+	  - JSON 변환(HttpMessageConverter)
+	-->
+	<annotation-driven />
+
+	<!-- =====================================================
+	     정적 자원 처리 (CSS / JS / Image)
+	     ===================================================== -->
+	<!--
+	  /resources/** 요청을 실제 /resources/ 디렉터리로 매핑
+	  - DispatcherServlet 을 거치지 않고 정적 파일 직접 응답
+	  - CSS, JS, 이미지 파일 처리
+	-->
+	<resources mapping="/resources/**" location="/resources/" />
+
+	<!-- =====================================================
+	     View Resolver 설정
+	     ===================================================== -->
+	<!--
+	  InternalResourceViewResolver
+	  - Controller 에서 반환한 View 이름을 JSP 로 변환
+	  - 예: return "board/list"
+	    → /WEB-INF/views/board/list.jsp
+	-->
+
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
+	<context:component-scan base-package="org.hati" />
+	
+	<!-- =====================================================
+	     Multipart (파일 업로드) 처리
+	     ===================================================== -->
+	<!--
+	  StandardServletMultipartResolver
+	  - Servlet 3.0 이상 환경에서 파일 업로드 처리
+	  - web.xml 의 multipart-config 와 연동
+	  - @RequestParam MultipartFile 사용 가능
+	  - 스프링 컨테이너에 파일 업로드 처리기를 Bean으로 등록하는 설정
+	-->
+	<beans:bean
+		id="multipartResolver"
+		class="org.springframework.web.multipart.support.StandardServletMultipartResolver">
+	</beans:bean>
+
+	<!-- =====================================================
+	     Method Level Security (선택적)
+	     ===================================================== -->
+	<!--
+	  메서드 단위 보안 어노테이션 활성화
+	  - @PreAuthorize
+	  - @PostAuthorize
+	  - @Secured
+	  ※ 실제 권한 정책은 security-context.xml 에서 정의
+	-->
+	<security:global-method-security
+		pre-post-annotations="enabled"
+		secured-annotations="enabled"
+	/>
+	
+</beans:beans>

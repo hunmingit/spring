@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.1" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee https://java.sun.com/xml/ns/javaee/web-app_3_1.xsd">
+
+	<!-- The definition of the Root Spring Container shared by all Servlets and Filters -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/spring/root-context.xml</param-value>
+	</context-param>
+	
+	<!-- Creates the Spring Container shared by all Servlets and Filters -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<!-- Processes application requests -->
+	<servlet>
+		<servlet-name>appServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/spring/appServlet/servlet-context.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+		
+		<!-- 파일 업로드 설정 -->
+		<multipart-config>
+			<!-- 업로드 파일의 임시 저장 디렉토리  -->
+			<location>C:\\upload</location>
+			<!-- 최대 파일 크기 -->
+			<max-file-size>20971520</max-file-size>
+			<!-- 요청 전체 최대 크기 -->
+			<max-request-size>41943040</max-request-size>
+			<!-- 메모리 임계치 -->
+			<file-size-threshold>20971520</file-size-threshold>
+		</multipart-config>
+		
+	</servlet>
+		
+	<servlet-mapping>
+		<servlet-name>appServlet</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	
+	<!-- 추가. 인코딩 -->
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<!-- 필터 초기화 파라미터 -->
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>utf-8</param-value>
+		</init-param>
+		<init-param>
+			<!-- request / response 모두 강제 적용 -->
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<!-- 필터 적용 범위 -->
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<!-- 스프링 시큐리티 필터 -->
+	<!-- 실제 구현체는 Spring Bean으로 존재 -->
+	<!-- web.xml → Spring Security Bean 연결 역할 -->
+	<!--  <filter>
+	   <filter-name>springSecurityFilterChain</filter-name>
+	   <filter-class>org.springframework.web.filter.DelegatingFilterProxy
+	   </filter-class>
+	</filter> -->
+	
+	<!-- 모든 요청에 보안 적용 -->
+	
+	<!--  <filter-mapping>
+	   <filter-name>springSecurityFilterChain</filter-name>
+	   <url-pattern>/*</url-pattern>
+	</filter-mapping> -->
+	
+	<!-- Root Context 중복 선언 (덮어 씌우기) -->
+	<!--  <context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+			/WEB-INF/spring/root-context.xml
+			/WEB-INF/spring/security-context.xml
+		</param-value>
+	</context-param> -->
+	
+</web-app>

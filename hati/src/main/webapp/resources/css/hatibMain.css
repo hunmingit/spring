@@ -1,0 +1,317 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background-color: #f8f9fa;
+    color: #222;
+}
+
+/* Header */
+.header {
+    background: #fff;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.logo-box {
+    width: 24px;
+    height: 24px;
+    background: #2563eb;
+}
+
+.logo-text {
+    font-size: 20px;
+    font-weight: bold;
+    color: #2563eb;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.search-wrapper {
+    position: relative;
+}
+
+.search-input {
+    width: 240px;
+    padding: 8px 36px 8px 12px; /* 오른쪽 패딩 넉넉히 */
+    border: 1px solid #d1d5db;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+.search-input:focus {
+    border-color: #2563eb;
+    outline: none;
+}
+
+.search-icon:hover {
+    color: #2563eb;
+}
+
+.search-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: #9ca3af;
+    cursor: pointer;
+}
+
+.profile-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #8eaee0;
+}
+
+/* 프로필 래퍼 */
+.profile-wrapper {
+    position: relative;
+}
+
+/* 드롭다운 메뉴 */
+.profile-menu {
+    position: absolute;
+    top: 42px;
+    right: 0;
+    width: 140px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    display: none;
+    overflow: hidden;
+    z-index: 100;
+}
+
+/* 메뉴 항목 */
+.profile-menu a {
+    display: block;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: #333;
+    text-decoration: none;
+}
+
+.profile-menu a:hover {
+    background: #f1f5f9;
+}
+
+/* 활성화 상태 */
+.profile-wrapper.active .profile-menu {
+    display: block;
+}
+
+/* Filter */
+.filter-section {
+    border-bottom: 1px solid #e5e7eb;
+    padding: 12px 0;
+}
+
+.filter-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* 왼쪽 필터 그룹 */
+.filter-left {
+    display: flex;
+    gap: 12px;
+}
+
+/* 오른쪽 */
+.filter-right {
+    display: flex;
+}
+.filter-btn {
+    padding: 8px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.filter-item {
+    position: relative;
+}
+/*드롭다운*/
+.filter-menu {
+    position: absolute;
+    top: 44px;
+    left: 0;
+    min-width: 140px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    display: none;
+    z-index: 20;
+}
+/* 활성화 상태 */
+.filter-item.active .filter-btn {
+    border-color: #2563eb;
+    color: #2563eb;
+}
+
+/*열렸을 때*/
+.filter-item.active .filter-menu {
+    display: block;
+}
+/* 옵션 */
+.filter-option {
+    padding: 10px 14px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.filter-option:hover {
+    background: #f1f5f9;
+}
+
+.filter-right {
+    margin-left: auto;
+    display: flex;
+    gap: 10px;
+}
+
+.map-btn {
+    padding: 8px 14px;
+    background: #ffffff;
+    color: #000000;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    cursor: pointer;
+}
+
+.sort-select {
+    padding: 8px;
+    border-radius: 6px;
+}
+
+
+/* Main */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 16px;
+}
+
+.facility-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+/* Facility Card */
+.facility-card {
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #eee;
+    transition: box-shadow 0.2s ease;
+}
+
+.facility-card:hover {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.facility-image {
+    height: 180px;
+    background: #e5e7eb;
+    position: relative;
+}
+
+.category-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: #facc15;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.facility-content {
+    padding: 16px;
+}
+
+.facility-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.facility-subtitle {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.facility-info {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 12px;
+}
+
+/* Rooms */
+.room-list {
+    background: #f9fafb;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 14px;
+}
+
+.room-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    padding: 4px 0;
+}
+
+.room-price {
+    font-weight: bold;
+}
+
+/* Button */
+.detail-btn {
+    display: block;
+    text-align: center;
+    padding: 10px;
+    background: #2563eb;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+}
