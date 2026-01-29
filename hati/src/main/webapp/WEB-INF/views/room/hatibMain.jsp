@@ -1,49 +1,50 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!-- Font Awesome 아이콘 ->
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<!-- HTML5 문서 선언 -->
 <!DOCTYPE html>
-<!-- 문서 언어를 한국어로 설정(접근성, 검색엔진, 브라우저 처리에 도움) -->
 <html lang="ko">
 <head>
-<!-- 한글 깨짐 방지 -->
     <meta charset="UTF-8">
     <title>H.A.T.I.Booking - 메인 화면</title>
-	<link rel="stylesheet"
-      	href="${pageContext.request.contextPath}/resources/css/hatibMain.css">
+    <!--${pageContext.request.contextPath} -> 프로젝트 루트 경로 (예: /hati)  -->
+    <!-- 서버 배포 환경이 바뀌어도 경로 깨지지 않게 하기 위함 -->
     <link rel="stylesheet"
- 		 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">  	
+          href="${pageContext.request.contextPath}/resources/css/hatibMain.css">
+    <!-- 아이콘(Font Awesome) CDN  돋보기, 아이콘 버튼에 사용 -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">  	
 </head>
 <body>
 
 <!-- Header -->
 <header class="header">
     <div class="header-inner">
-    <!-- 로고 영역-->
         <div class="logo">
             <span class="logo-box"></span>
             <span class="logo-text">H.A.T.I.Booking</span>
         </div>
         
+        <!-- 검색 input + 아이콘을 묶기 위한 부모 -->
         <div class="header-right">
             <div class="search-wrapper">
-			    <input type="text" placeholder="공간 검색" class="search-input">
-			    <!-- Font Awesome 돋보기 아이콘 주소 https://fontawesome.com/icons/magnifying-glass?f=classic&s=solid -->
-			    <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
-			</div>
-			
+                <input type="text" placeholder="공간 검색" class="search-input">
+                <!-- Font Awesome 돋보기 아이콘 -->
+                <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+            </div>
+            
             <div class="profile-wrapper">
-    			<div class="profile-circle"></div>
-   				 <!-- 프로필 드롭다운 메뉴 -->
-    				<div class="profile-menu">
-       					 <a href="/profile">프로필관리</a>
-   						 <a href="/reservationList">예약리스트</a>
-       					 <a href="/SavedSpace">찜한공간</a>
-       					 <a href="/Review">이용후기</a>
-    				</div>
-			</div>
+            <!-- 동그란 프로필 아이콘 (아바타 자리) -->
+                <div class="profile-circle"></div>
+                <!--  프로필 클릭 시 드롭다운 메뉴 -->
+                <div class="profile-menu">
+                    <a href="/profile">프로필관리</a>
+                    <a href="/reservationList">예약리스트</a>
+                    <a href="/SavedSpace">찜한공간</a>
+                    <a href="/Review">이용후기</a>
+                </div>
+            </div>
         </div>
     </div>
 </header>
@@ -51,10 +52,7 @@
 <!-- Filter Area -->
 <section class="filter-section">
     <div class="filter-inner">
-
-        <!-- 왼쪽 필터 그룹 -->
         <div class="filter-left">
-
             <div class="filter-item">
                 <button class="filter-btn">지역 ▼</button>
                 <div class="filter-menu">
@@ -65,7 +63,7 @@
                 </div>
             </div>
 
-            <div class="filter-item">
+            <div class="filter-item"> <!-- 달력으로 바꿀 예정 -->
                 <button class="filter-btn">날짜 ▼</button>
                 <div class="filter-menu">
                     <div class="filter-option">오늘</div>
@@ -92,56 +90,53 @@
                     <div class="filter-option">가격 높은 순</div>
                 </div>
             </div>
-
         </div>
 
-        <!-- 오른쪽 -->
         <div class="filter-right">
             <button class="map-btn">지도</button>
         </div>
-
     </div>
 </section>
 
-<!-- Facilities List -->
-<!-- 전체 컨테이너 CSS Grid로 카드 여러 개 배치-->
+<!-- Centers List -->
 <main class="container">
+	<!--CSS Grid 카드들을 자동으로 배치 -->
     <div class="facility-grid">
-		<!-- facilitiesList는 컨트롤러에서 model로 내려준 데이터 -->
-		<!--  jsp는 데이터를 가공하지 않고 출력만 함 -->
-        <c:forEach var="facility" items="${facilitiesList}">
-        <!-- 시설 카드 하나(시설 1개) 담기는 정보 -->
-            <div class="facility-card">
+    <!-- 컨트롤러에서 넘긴 centerList를 하나씩 반복  center = 현재 센터 객체-->
+        <c:forEach var="center" items="${centerList}">
+          
+			 <div class="facility-card">
+			 <!-- onerror가 하는 일 이미지 없으면 기본 이미지로 대체 -->
+			    <div class="facility-image"><!-- 폴더 경로 /resources/img/room/1/main.jpg -->
+			        <img
+			            src="${pageContext.request.contextPath}/resources/img/room/${center.centerId}/main.jpg"
+			            onerror="this.src='${pageContext.request.contextPath}/resources/img/room/default/main.jpg'"
+			            alt="센터 이미지">
+			        <span class="category-badge">${center.category}</span>
+			    </div>
+			
+			    <div class="facility-content">
+			        <h3 class="facility-title">${center.name}</h3>
+			        <p class="facility-subtitle">${center.subtitle}</p>
+			
+			        <div class="facility-info">
+			            <span class="district">${center.region}</span>
+			            <span class="price"> <!-- 가격에 천 단위 콤마 ex)30,000-->
+			                ₩<fmt:formatNumber value="${center.price}" pattern="#,###"/>원
+			            </span>
+			        </div>
 
-                <!-- 시설 대표 이미지 -->
-                <!-- ${facility.category}는 카테고리 -->
-                <div class="facility-image">
-                    <span class="category-badge">${facility.category}</span>
+                    <a href="/centers/${center.centerId}" class="detail-btn">상세보기</a>
                 </div>
-
-				<!-- 시설 기본 정보 -->
-                <div class="facility-content">
-                <!-- title은 시설명, subtitle은 한 줄 소개 -->
-                    <h3 class="facility-title">${facility.title}</h3>
-                    <p class="facility-subtitle">${facility.subtitle}</p>
-                    
-					<!-- 지역 정보 -->
-                    <div class="facility-info">
-                        <span class="district">${facility.district}</span>
-                        <!-- 시설 사격 -->
-                        <span class="price">
-                        	<fmt:formatNumber value="${facility.price}"></fmt:formatNumber>
-                        </span>
-                    </div>
-
-                    <a href="/facilities/${facility.id}" class="detail-btn">상세보기</a>
-                </div>
-
             </div>
         </c:forEach>
-
     </div>
 </main>
-	<script type="text/javascript" src="/resources/js/hatibMain.js"></script>
+
+<script type="text/javascript">
+    const contextPath = '${pageContext.request.contextPath}';
+</script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/hatibMain.js"></script>
+
 </body>
 </html>
