@@ -1,9 +1,11 @@
+
+/*모든 요소의 기본 여백 제거*/
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
-
+/*os기본 ui폰트 사용, 연한 회색 배경 */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     background-color: #f8f9fa;
@@ -11,11 +13,13 @@ body {
 }
 
 /* Header */
+/*헤더 배경 회색, 하단에 얇은 구분선*/
 .header {
     background: #fff;
     border-bottom: 1px solid #e5e7eb;
 }
 
+/*가운데 정렬 컨테이너 좌/우 요소를 flax로 배치*/
 .header-inner {
     max-width: 1200px;
     margin: 0 auto;
@@ -24,19 +28,19 @@ body {
     justify-content: space-between;
     align-items: center;
 }
-
+/*로고 아이콘 + 텍스트 가로 배치*/
 .logo {
     display: flex;
     align-items: center;
     gap: 8px;
 }
-
+/*로고 아이콘 역할(추후 이미지로 교체)*/
 .logo-box {
     width: 24px;
     height: 24px;
     background: #2563eb;
 }
-
+/*로고 컬러 통일 */
 .logo-text {
     font-size: 20px;
     font-weight: bold;
@@ -48,11 +52,11 @@ body {
     align-items: center;
     gap: 12px;
 }
-
+/*검색 창 아이콘을 input 위에 올리기 위한 기준점*/
 .search-wrapper {
     position: relative;
 }
-
+/*검색 창 오른쪽 여유 공간 확보*/
 .search-input {
     width: 240px;
     padding: 8px 36px 8px 12px;
@@ -75,11 +79,12 @@ body {
     color: #9ca3af;
     cursor: pointer;
 }
-
+/*포커스 시 돋보기 아이콘 강조*/
 .search-icon:hover {
     color: #2563eb;
 }
 
+/*프로필 이미지 자리*/
 .profile-circle {
     width: 32px;
     height: 32px;
@@ -121,18 +126,19 @@ body {
     background: #f1f5f9;
 }
 
-/* 활성화 상태 */
+/* 활성화 상태 기본적으로 숨김 상태 , js에서 .active 붙이면 메뉴 표시*/
 .profile-wrapper.active .profile-menu {
     display: block;
 }
 
 /* Filter */
+/*헤더 아래 필터 바*/
 .filter-section {
     background: #fff;
     border-bottom: 1px solid #e5e7eb;
     padding: 12px 0;
 }
-
+/*필터 좌/ 지도 버튼 우 간격*/
 .filter-inner {
     max-width: 1200px;
     margin: 0 auto;
@@ -234,17 +240,23 @@ body {
 
 /* Facility Card */
 .facility-card {
-    background: #fff;
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid #eee;
-    transition: box-shadow 0.2s ease;
-    display: flex;
-    flex-direction: column;
+    display: block; /* a 태그를 블록으로 */
+    text-decoration: none; /* 밑줄 제거 */
+    color: inherit; /* 부모 색상 상속 */
+    cursor: pointer; /* 커서 포인터 */
+    transition: transform 0.2s, box-shadow 0.2s; /* 호버 효과를 위한 트랜지션 */
+    border: 1px solid #d1d5db;
+    border-radius: 11px;
 }
 
 .facility-card:hover {
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    transform: translateY(-5px); /* 살짝 올라가는 효과 */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* 그림자 강조 */
+}
+
+/* 방문한 링크 색상 변경 방지 */
+.facility-card:visited {
+    color: inherit;
 }
 
 /* 이미지 스타일  */
@@ -254,14 +266,17 @@ body {
     aspect-ratio: 4 / 3;      /* 400:300 비율 */
     background: #e5e7eb;
     overflow: hidden;
+    border: 1px solid #d1d5db;
+    border-radius: 11px 11px 0 0;
+    
 }
 .facility-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover;        /* ⭐ 핵심 */
+    object-fit: cover;      
     display: block;
 }
-
+/*카드 hover시 이미지 확대*/
 .facility-image img {
     transition: transform 0.3s ease;
 }
@@ -269,7 +284,7 @@ body {
 .facility-card:hover .facility-image img {
     transform: scale(1.05);
 }
-
+/*카테고리 배지 이미지 위에 고정 표시*/
 .category-badge {
     position: absolute;
     top: 12px;
@@ -331,3 +346,134 @@ body {
 .detail-btn:hover {
     background: #1d4ed8;
 }
+
+/* 모달 스타일 */
+/*전체 화면을 덮는 어두운 배경*/
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.3s;
+}
+/*모달 등장 에니메이션*/
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+/*중앙 정렬된 카드형 모달*/
+.modal-content {
+    background-color: #fefefe;
+    margin: 3% auto;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 1200px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    animation: slideDown 0.3s;
+}
+/*모달 등장 에니메이션*/
+@keyframes slideDown {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    padding: 20px 30px;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+}
+
+.close {
+    color: #aaa;
+    font-size: 32px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+}
+
+.modal-body {
+    padding: 20px 30px 30px;
+}
+
+/* 지도 내 커스텀 오버레이 스타일 */
+/*지도 카드 대신 표식되는 마커*/
+.custom-overlay {
+    position: relative;
+    background: #fff;
+    border: 2px solid #0080ff;
+    border-radius: 8px;
+    padding: 8px 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+/*마우스 오버시 강조 컨셉 컬러와 통일*/
+.custom-overlay:hover {
+    background: #0080ff;
+    color: white;
+    transform: scale(1.05);
+}
+/*말풍선 꼬리 표현*/
+.custom-overlay::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #0080ff;
+}
+
+.custom-overlay:hover::after {
+    border-top-color: #0080ff;
+}
+
+.overlay-title {
+    font-size: 13px;
+    margin-bottom: 4px;
+    color: #333;
+}
+
+.custom-overlay:hover .overlay-title {
+    color: white;
+}
+
+.overlay-price {
+    font-size: 15px;
+    color: #0080ff;
+    font-weight: bold;
+}
+
+.custom-overlay:hover .overlay-price {
+    color: white;
+}
+

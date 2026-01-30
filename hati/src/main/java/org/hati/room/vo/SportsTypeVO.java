@@ -11,8 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 
 public class SportsTypeVO {
-    private int sportsId;
-    private String sportsName;
-    private int price;
-    private Date createdAt;
+    private int sportId;      
+    private String category;  
+    private int baseFee;      
 }

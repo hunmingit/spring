@@ -92,7 +92,10 @@
 
 	<!--
 	  Mapper 인터페이스 자동 스캔
-	  - @Mapper 없이도 MyBatis Mapper 인식
+	  - @Mapper 없이도 MyBatis Mapper 인식 .... -> 
+	  mybatis-spring:scan이 너무 광범위하게 스캔하고 있어서 
+	  Service 인터페이스까지 Mapper로 인식하고 있습니다.
+	  각 mapper 패키지를 직접 지정
 	-->
 	<!-- <mybatis-spring:scan base-package="org.hati"/> -->
 	

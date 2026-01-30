@@ -1,40 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
+    
 <mapper namespace="org.hati.room.mapper.RoomMapper">
 
     <!-- 센터 리스트 조회 -->
     <select id="getCenterList" parameterType="map" resultType="org.hati.room.vo.CenterVO">
         SELECT 
             c.center_id AS centerId,
-            c.name,
-            c.subtitle,
-            c.category,
-            c.region,
+            c.center_name AS centerName,
+            c.center_region AS centerRegion,
+            c.center_content AS centerContent,
             c.latitude,
             c.longitude,
             c.created_at AS createdAt,
-            st.price AS price,
+            st.category AS category,
+            st.base_fee AS baseFee,
             COUNT(r.room_id) AS roomCount
         FROM centers c
         LEFT JOIN rooms r ON c.center_id = r.center_id
-        LEFT JOIN sports_type st ON r.sports_id = st.sports_id
+        LEFT JOIN sports_type st ON r.sport_id = st.sport_id
         WHERE 1=1
         <if test="region != null and region != ''">
-            AND c.region = #{region}
+            AND c.center_region = #{region}
         </if>
         <if test="category != null and category != ''">
-            AND c.category = #{category}
+            AND st.category = #{category}
         </if>
-        GROUP BY c.center_id, c.name, c.subtitle, c.category, c.region, 
-                 c.latitude, c.longitude, c.created_at, st.price
+        GROUP BY 
+            c.center_id, 
+            c.center_name, 
+            c.center_region, 
+            c.center_content, 
+            c.latitude, 
+            c.longitude, 
+            c.created_at,
+            st.category,
+            st.base_fee
         <choose>
             <when test="sortType == 'price_asc'">
-                ORDER BY st.price ASC
+                ORDER BY st.base_fee ASC NULLS LAST
             </when>
             <when test="sortType == 'price_desc'">
-                ORDER BY st.price DESC
+                ORDER BY st.base_fee DESC NULLS LAST
             </when>
             <otherwise>
                 ORDER BY c.created_at DESC
@@ -46,37 +54,41 @@
     <select id="getCenterDetail" parameterType="int" resultMap="centerDetailMap">
         SELECT 
             c.center_id,
-            c.name,
-            c.subtitle,
-            c.category,
-            c.region,
+            c.center_name,
+            c.center_region,
+            c.center_content,
             c.latitude,
             c.longitude,
             c.created_at,
-            st.price,
-            r.room_id
+            r.room_id,
+            r.center_id AS room_center_id,
+            r.sport_id,
+            st.category,
+            st.base_fee
         FROM centers c
         LEFT JOIN rooms r ON c.center_id = r.center_id
-        LEFT JOIN sports_type st ON r.sports_id = st.sports_id
+        LEFT JOIN sports_type st ON r.sport_id = st.sport_id
         WHERE c.center_id = #{centerId}
         ORDER BY r.room_id
     </select>
 
     <resultMap id="centerDetailMap" type="org.hati.room.vo.CenterVO">
         <id property="centerId" column="center_id"/>
-        <result property="name" column="name"/>
-        <result property="subtitle" column="subtitle"/>
-        <result property="category" column="category"/>
-        <result property="region" column="region"/>
+        <result property="centerName" column="center_name"/>
+        <result property="centerRegion" column="center_region"/>
+        <result property="centerContent" column="center_content"/>
         <result property="latitude" column="latitude"/>
         <result property="longitude" column="longitude"/>
         <result property="createdAt" column="created_at"/>
-        <result property="price" column="price"/>
+        <result property="category" column="category"/>
+        <result property="baseFee" column="base_fee"/>
         
         <collection property="rooms" ofType="org.hati.room.vo.RoomVO">
             <id property="roomId" column="room_id"/>
-            <result property="centerId" column="center_id"/>
-            <result property="sportsId" column="sports_id"/>
+            <result property="centerId" column="room_center_id"/>
+            <result property="sportId" column="sport_id"/>
+            <result property="category" column="category"/>
+            <result property="baseFee" column="base_fee"/>
         </collection>
     </resultMap>
 

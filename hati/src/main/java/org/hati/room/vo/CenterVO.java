@@ -11,17 +11,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 
 public class CenterVO {
+    // DB 테이블 기본 필드
     private int centerId;
-    private String name;
-    private String subtitle;
-    private String category;
-    private String region;
-    private String latitude;
-    private String longitude;
+    private String centerName;      // name → centerName
+    private String centerRegion;    // region → centerRegion
+    private String centerContent;   // subtitle → centerContent
+    private Double latitude;        // String → Double
+    private Double longitude;       // String → Double
     private Date createdAt;
     
-    //조회용 추가 필드
-    private int price;              // 해당 시설의 가격 (sports_type에서)
+    // 조회용 추가 필드 (JOIN으로 가져올 데이터)
+    private String category;        // sports_type.category (대표 카테고리)
+    private Integer baseFee;        // sports_type.base_fee (최소 가격)
     private int roomCount;          // 룸 개수
     private List<RoomVO> rooms;     // 룸 목록 (상세페이지용)
+
 }
