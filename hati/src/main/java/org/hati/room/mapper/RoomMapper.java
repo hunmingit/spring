@@ -9,7 +9,7 @@ import org.hati.room.vo.CenterVO;
 
 public interface RoomMapper {
     
-    // 센터 리스트 조회
+    // 센터 리스트 조회 다음엔 dto view 기능 해보자 
     List<CenterVO> getCenterList(Map<String, Object> params);
     
     // 센터 상세 조회

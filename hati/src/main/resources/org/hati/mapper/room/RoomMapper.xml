@@ -3,7 +3,6 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
     
 <mapper namespace="org.hati.room.mapper.RoomMapper">
-
     <!-- 센터 리스트 조회 -->
     <select id="getCenterList" parameterType="map" resultType="org.hati.room.vo.CenterVO">
         SELECT 
@@ -16,10 +15,13 @@
             c.created_at AS createdAt,
             st.category AS category,
             st.base_fee AS baseFee,
-            COUNT(r.room_id) AS roomCount
+            COUNT(DISTINCT r.room_id) AS roomCount,
+            COUNT(DISTINCT cr.account_id) AS reviewCount,
+            ROUND(AVG(cr.grade), 1) AS avgGrade
         FROM centers c
         LEFT JOIN rooms r ON c.center_id = r.center_id
         LEFT JOIN sports_type st ON r.sport_id = st.sport_id
+        LEFT JOIN centers_reviews cr ON c.center_id = cr.center_id
         WHERE 1=1
         <if test="region != null and region != ''">
             AND c.center_region = #{region}
@@ -44,12 +46,15 @@
             <when test="sortType == 'price_desc'">
                 ORDER BY st.base_fee DESC NULLS LAST
             </when>
+            <when test="sortType == 'review_desc'">
+                ORDER BY reviewCount DESC, avgGrade DESC, c.created_at DESC
+            </when>
             <otherwise>
                 ORDER BY c.created_at DESC
             </otherwise>
         </choose>
     </select>
-
+    
     <!-- 센터 상세 조회 -->
     <select id="getCenterDetail" parameterType="int" resultMap="centerDetailMap">
         SELECT 
@@ -71,7 +76,7 @@
         WHERE c.center_id = #{centerId}
         ORDER BY r.room_id
     </select>
-
+    
     <resultMap id="centerDetailMap" type="org.hati.room.vo.CenterVO">
         <id property="centerId" column="center_id"/>
         <result property="centerName" column="center_name"/>
@@ -91,5 +96,4 @@
             <result property="baseFee" column="base_fee"/>
         </collection>
     </resultMap>
-
 </mapper>

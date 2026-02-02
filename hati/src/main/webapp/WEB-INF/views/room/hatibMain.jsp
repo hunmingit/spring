@@ -14,6 +14,8 @@
           href="${pageContext.request.contextPath}/resources/css/hatibMain.css">
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- Flatpickr CSS (캘린더 라이브러리) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 <body>
 
@@ -49,58 +51,98 @@
 <section class="filter-section">
     <div class="filter-inner">
         <div class="filter-left">
-            <div class="filter-item">
+        <!-- 지역 필터 -->
+            <div class="filter-item" id="regionFilter">
                 <button class="filter-btn">지역 ▼</button>
                 <div class="filter-menu">
-                    <div class="filter-option">강동구</div>
-                    <div class="filter-option">강서구</div>
-                    <div class="filter-option">강북구</div>
-                    <div class="filter-option">강남구</div>
+                    <div class="filter-option" data-value="">전체</div>
+                    <div class="filter-option" data-value="강동구">강동구</div>
+                    <div class="filter-option" data-value="강서구">강서구</div>
+                    <div class="filter-option" data-value="강북구">강북구</div>
+                    <div class="filter-option" data-value="강남구">강남구</div>
+                    <div class="filter-reset">
+                        <button class="reset-btn" data-filter="region">
+                            <i class="fa-solid fa-rotate-right"></i> 초기화
+                        </button>
+                    </div>
                 </div>
             </div>
-
-            <div class="filter-item">
-                <button class="filter-btn">날짜 ▼</button>
-                <div class="filter-menu">
-                    <div class="filter-option">오늘</div>
-                    <div class="filter-option">내일</div>
-                    <div class="filter-option">이번 주</div>
+			<!-- 날짜 필터 (캘린더) -->
+            <div class="filter-item" id="dateFilter">
+                <button class="filter-btn">날짜 선택 ▼</button>
+                <div class="filter-menu calendar-menu">
+                    <input type="text" id="datePicker" class="date-input" placeholder="날짜를 선택하세요" readonly>
+                    <div class="filter-reset">
+                        <button class="reset-btn" data-filter="date">
+                            <i class="fa-solid fa-rotate-right"></i> 초기화
+                        </button>
+                    </div>
                 </div>
             </div>
-
-            <div class="filter-item">
+			<!-- 운동 종목 필터 -->
+            <div class="filter-item" id="sportFilter">
                 <button class="filter-btn">운동 종목 ▼</button>
                 <div class="filter-menu">
-                    <div class="filter-option">헬스</div>
-                    <div class="filter-option">요가</div>
-                    <div class="filter-option">풋살</div>
-                    <div class="filter-option">골프</div>
+                    <div class="filter-option" data-value="">전체</div>
+                    <div class="filter-option" data-value="GYM">헬스</div>
+                    <div class="filter-option" data-value="YOGA">요가</div>
+                    <div class="filter-option" data-value="FOOTBALL">풋살</div>
+                    <div class="filter-option" data-value="SCREEN_GOLF">골프</div>
+                    <div class="filter-reset">
+                        <button class="reset-btn" data-filter="sport">
+                            <i class="fa-solid fa-rotate-right"></i> 초기화
+                        </button>
+                    </div>
                 </div>
             </div>
-
-            <div class="filter-item">
-                <button class="filter-btn">베스트 공간 순 ▼</button>
+			<!-- 정렬 필터 -->
+            <div class="filter-item" id="sortFilter">
+                <button class="filter-btn">정렬 기준 ▼</button>
                 <div class="filter-menu">
-                    <div class="filter-option">베스트 공간 순</div>
-                    <div class="filter-option">가격 낮은 순</div>
-                    <div class="filter-option">가격 높은 순</div>
+                    <div class="filter-option" data-value="review_desc">베스트 공간 순</div>
+                    <div class="filter-option" data-value="price_asc">가격 낮은 순</div>
+                    <div class="filter-option" data-value="price_desc">가격 높은 순</div>
+                    <div class="filter-reset">
+                        <button class="reset-btn" data-filter="sort">
+                            <i class="fa-solid fa-rotate-right"></i> 초기화
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="filter-right">
             <button class="map-btn" id="mapBtn">지도</button>
+            <!-- 전체 초기화 버튼 -->
+            <button class="all-reset-btn" id="allResetBtn">
+                <i class="fa-solid fa-arrow-rotate-left"></i> 전체 초기화
+            </button>
+        
         </div>
     </div>
 </section>
 
 <!-- Centers List -->
 <main class="container">
-    <div class="facility-grid">
+    <!-- 로딩 표시 -->
+    <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+        <i class="fa-solid fa-spinner fa-spin"></i> 검색 중...
+    </div>
+    <!-- 필터 적용 상태 표시 -->
+    <div id="filterStatus" class="filter-status">
+        <span id="filterCount">전체 <strong>${fn:length(centerList)}</strong>개 시설</span>
+    </div>	
+
+    <div class="facility-grid" id="facilityGrid">
     <!-- 센터 목록 반복 출력 센터 하나당 카드 하나  -->
         <c:forEach var="center" items="${centerList}">
         <!-- 카드 전체 클릭 링크 카드 클릭 시 -> 센터 상세 페이지로 이동 -->
-            <a href="${pageContext.request.contextPath}/centers/${center.centerId}" class="facility-card">
+            <a href="${pageContext.request.contextPath}/centers/${center.centerId}" 
+            class="facility-card"
+            data-region="${center.centerRegion}"
+            data-category="${center.category}"
+            data-price="${center.baseFee}">
+            
             <!-- 센터별 대표 이미지 onerror : 이미지 없으면 기본 이미지로 대체 -->
                 <div class="facility-image">
                     <img src="${pageContext.request.contextPath}/resources/img/room/${center.centerId}/main.jpg"
@@ -132,6 +174,14 @@
             </a>
         </c:forEach>
     </div>
+    
+    <!-- 결과 없음 메시지 -->
+    <div id="noResults" class="no-results" style="display: none;">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <p>검색 조건에 맞는 시설이 없습니다.</p>
+        <button class="all-reset-btn" onclick="resetAllFilters()">필터 초기화</button>
+    </div>
+    
 </main>
 
 <!-- 지도 팝업 모달 -->
@@ -151,34 +201,32 @@
 
 <!-- 카카오 지도 API - HTTPS 명시, 카카오 지도 SDK, JS 파일보다 반드시 먼저 로드해야 함 -->
 <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=ddf15a2e7b11221e20f39af9cfb417d0"></script>
+<!-- Flatpickr JS (캘린더) -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
 
-<script type="text/javascript">
-    console.log('현재 URL:', window.location.href);
-    console.log('프로토콜:', window.location.protocol);
-    // JS에서도 contextPath 사용 가능하게 전달
-    const contextPath = '${pageContext.request.contextPath}';
-    
-    // Java → JS 데이터 변환 시작 센터 데이터를 JavaScript 배열로 변환 (문자열로 전달)
-	const centerList = [
-	<c:forEach var="center" items="${centerList}">
-	//지도 마커용 데이터 구조
-	{
-	    centerId: "${center.centerId}",
-	    centerName: "${fn:escapeXml(center.centerName)}",
-	    latitude: "${center.latitude}",
-	    longitude: "${center.longitude}",
-	    baseFee: "${center.baseFee}",
-	    centerRegion: "${fn:escapeXml(center.centerRegion)}"
-	},
-	</c:forEach>
-	];
+<script>
+const contextPath = '${pageContext.request.contextPath}';
+
+const centerList = [
+<c:forEach var="center" items="${centerList}" varStatus="status">
+{
+    centerId: ${center.centerId},
+    centerName: "${fn:escapeXml(center.centerName)}",
+    centerRegion: "${center.centerRegion}",
+    category: "${center.category}",
+    latitude: ${center.latitude},
+    longitude: ${center.longitude},
+    baseFee: ${center.baseFee},
+    centerContent: "${fn:escapeXml(center.centerContent)}",
+    reviewCount: ${center.reviewCount}
+}<c:if test="${not status.last}">,</c:if>
+</c:forEach>
+];
     
     console.log('centerList:', centerList);
-    console.log('centerList length:', centerList.length);
-    console.log('kakao 객체:', typeof kakao);
-    
 </script>
-<!-- 메인 js 로드 -->
+
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/hatibMain.js"></script>
 
 </body>

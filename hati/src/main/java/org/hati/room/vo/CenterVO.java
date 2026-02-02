@@ -24,6 +24,8 @@ public class CenterVO {
     private String category;        // sports_type.category (대표 카테고리)
     private Integer baseFee;        // sports_type.base_fee (최소 가격)
     private int roomCount;          // 룸 개수
+    private int reviewCount;        // 리뷰 작성한 사용자 수
+    private Double avgGrade; 
     private List<RoomVO> rooms;     // 룸 목록 (상세페이지용)
 
 }

@@ -35,7 +35,7 @@ public class RoomController {
         return "room/hatibMain";
     }
     
-    // 필터링된 센터 리스트 (선택사항)
+    // 필터링된 센터 리스트
     @GetMapping("/list")
     public String centerList(
             @RequestParam(required = false) String region,
