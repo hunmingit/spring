@@ -65,7 +65,7 @@ public class ReplyController {
 	    log.info("get reply rno : " + rno);
 
 	    ReplyVO vo = service.read(rno);
-//댓글 존재할 때 HTTP 상태: 200 OK 댓글 없을 때 HTTP 상태: 404 NOT FOUND
+//댓글 존재할 때 HTTP 상태: 200 OK 댓글 없을 때 HTTP 상태: 404 NOT FOUND 오류
 	    return vo != null ?
 	            new ResponseEntity<>(vo, HttpStatus.OK) :
 	            new ResponseEntity<>(HttpStatus.NOT_FOUND);
