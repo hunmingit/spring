@@ -5,7 +5,14 @@
     padding: 0;
     box-sizing: border-box;
 }
-/*os기본 ui폰트 사용, 연한 회색 배경 */
+
+/*os기본 ui폰트 사용, 연한 회색 배경 
+-apple-system : macOS / iOS 기본 시스템 폰트 (San Francisco)
+BlinkMacSystemFont : 크롬 부라우저에서 macOS용 폰트 보완
+"Segoe UI" : Windows 기본 UI 폰트
+sans-serif : 위 폰트가 전부 없을 경우 기본 고딕체
+사용자의 OS에 가장 잘 어울리는 네이티브 느낌의 폰트가 자동 적용됨
+*/
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     background-color: #f8f9fa;
@@ -21,18 +28,19 @@ body {
 
 /*가운데 정렬 컨테이너 좌/우 요소를 flax로 배치*/
 .header-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    max-width: 1200px; /*콘텐츠 최대 가로 폭 화면이 아무리 커도 1200px이상 안 늘어남*/
+    margin: 0 auto; /*좌우 자동 여백(가운데 정렬) width 또는 max-width가 있어야 중앙 정렬이 됨*/
+    padding: 16px; /*안쪽 여백, 헤더 내용이 가장자리랑 딱 붙지 않게 해줌*/
+    display: flex; /*내부 요소들이 가로 방향 배치 (로고, 검색, 프로필 아이콘)*/
+    justify-content: space-between; /*첫 요소는 왼쪽 끝, 마지막 요소는 오른쪽 끝*/
+    align-items: center; /*로고, 텍스트, 버튼 높이가 달라도 한 줄로 맞춰짐*/
 }
-/*로고 아이콘 + 텍스트 가로 배치*/
+/*로고 아이콘 + 텍스트 가로 배치
+로고 전체 래퍼 아이콘+텍스트를 묶는 컨테이너*/
 .logo {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    display: flex; /*아이콘과 텍스트를 가로로 나란히 배치 */
+    align-items: center; /*텍스트 높이 달라도 중앙에 딱 맞음*/
+    gap: 8px; /*아이콘 ↔ 텍스트 사이 간격*/
 }
 /*로고 아이콘 역할(추후 이미지로 교체)*/
 .logo-box {
@@ -52,78 +60,148 @@ body {
     align-items: center;
     gap: 12px;
 }
-/*검색 창 아이콘을 input 위에 올리기 위한 기준점*/
+
+/*검색 창 아이콘을 input 위에 올리기 위한 기준점
+이 요소를 기준점으로 쓰겠다. 자식 요소가 position: absolute일 때 자식 요소의 위치 기준이 됨*/
 .search-wrapper {
     position: relative;
 }
-/*검색 창 오른쪽 여유 공간 확보*/
+
+/*검색 창 오른쪽 아이콘 여유 공간 확보*/
 .search-input {
-    width: 240px;
-    padding: 8px 36px 8px 12px;
+    width: 240px; /*검색창 고정 너비*/
+    padding: 8px 36px 8px 12px; /*36px -> 오른쪽에 검색 아이콘이 올라갈 공간을 미리 비워둠*/
     border: 1px solid #d1d5db;
     border-radius: 20px;
     font-size: 14px;
 }
-
+/*포커스 시 브랜드 컬러 강조
+input이 클릭되었을 때*/
 .search-input:focus {
     border-color: #2563eb;
     outline: none;
 }
-
+/*검색 아이콘을 input내부 오른쪽에 고정*/
 .search-icon {
-    position: absolute;
+    background: none;        /* button 기본 배경 제거 */
+    border: none;            /* button 기본 테두리 제거 */
+    position: absolute; /*부모(.search-wrapper) 기준으로 자유롭게 위치 고정*/
     right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 50%; /*부모 높이의 정중앙 지점*/
+    transform: translateY(-50%); /*자기 높이의 절반만큼 위로 당김*/
     font-size: 16px;
     color: #9ca3af;
     cursor: pointer;
+    padding: 0;              /* button 기본 패딩 제거 */
 }
-/*포커스 시 돋보기 아이콘 강조*/
+
+/*마우스 올리면 브랜드 컬러로 변경*/
 .search-icon:hover {
     color: #2563eb;
+}
+
+/* 검색 폼 */
+.search-form {
+    margin: 0;
+}
+
+/* 검색 결과 정보 영역 
+검색 시 연한 하늘색 배경으로 결과 영역 시각적 구분*/
+.search-result-info {
+    background: #f0f9ff;
+    border-bottom: 1px solid #bfdbfe;
+    padding: 12px 0;
+}
+
+/*가운데 정렬, 최대 폭 제한*/
+.search-result-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/*검색 키워드 텍스트 
+본문 보다 좀 더 진한 파랑*/
+.search-keyword {
+    font-size: 15px;
+    color: #1e40af;
+}
+
+/*검색어 자체만 더 강조*/
+.search-keyword strong {
+    color: #2563eb;
+    font-weight: 600;
+}
+
+/*검색 초기화 버튼 
+빨간색으로 취소, 초기화 기능임을 사용자가 직관적으로 인식
+text-decoration: none; -> a 태그 기본 밑줄 제거*/
+.clear-search {
+    color: #ef4444;
+    text-decoration: none;
+    font-size: 14px;
+    display: flex; /*아이콘 + 텍스트 세로 중앙 정렬*/
+    align-items: center; /*아이콘 + 텍스트 세로 중앙 정렬*/
+    gap: 4px; /*아이콘과 텍스트 사이 자연스러운 간격, margin보다 관리하기 쉬움 (flex 전용)*/ 
+    padding: 6px 12px;/*클릭 영역 확보, 텍스트만 누르는 게 아니라 주변도 클릭 가능*/
+    border-radius: 6px;
+    transition: background 0.2s; /*hover 시 배경색 변경 천천히*/
+}
+
+/*검색 초기화 버튼 마우스 오버 시 배경색 변경*/
+.clear-search:hover {
+    background: #fee2e2;
+}
+
+/*아이콘(x) 크기를 텍스트보다 살짝 작게*/
+.clear-search i {
+    font-size: 12px;
 }
 
 /*프로필 이미지 자리*/
 .profile-circle {
     width: 32px;
     height: 32px;
-    border-radius: 50%;
-    background: #8eaee0;
-    cursor: pointer;
+    border-radius: 50%; /*완전한 원형*/
+    background: #8eaee0; /*임시 프로필 플레이스 홀더 색상*/
+    cursor: pointer; /*커서 변경*/
 }
 
 /* 프로필 래퍼 */
 .profile-wrapper {
-    position: relative;
+    position: relative; /*안에 들어갈 메뉴가 absolute 속성을 가지기 떄문*/
 }
 
-/* 드롭다운 메뉴 */
+/* 프로필 클릭 시 드롭다운 메뉴 */
 .profile-menu {
-    position: absolute;
-    top: 42px;
-    right: 0;
+    position: absolute; /*부모인 .profile-wrapper 기준으로 위치 결정*/
+    top: 42px; /*프로필 원(32px) + 여백 약간 아래*/
+    right: 0; /*메뉴의 오른쪽을 프로필 오른쪽에 맞춤*/
     width: 140px;
     background: #fff;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-    display: none;
+    display: none; /*기본 숨김 상태*/
     overflow: hidden;
-    z-index: 100;
+    z-index: 100; /*헤더, 필터, 카드 위로*/
 }
 
 /* 메뉴 항목 */
 .profile-menu a {
-    display: block;
+    display: block; /*링크(<a>) 전체가 클릭 영역, 텍스트만 누르는 게 아니라 줄 전체 클릭 가능*/
     padding: 10px 12px;
     font-size: 14px;
     color: #333;
-    text-decoration: none;
+    text-decoration: none; /*링크 밑줄 제거 → 버튼처럼 보이게*/
 }
 
+/*메뉴 항목 hover*/
 .profile-menu a:hover {
-    background: #f1f5f9;
+    background: #f1f5f9; /*마우스를 올린 메뉴만 살짝 강조*/
 }
 
 /* 활성화 상태 기본적으로 숨김 상태 , js에서 .active 붙이면 메뉴 표시*/
@@ -138,6 +216,7 @@ body {
     border-bottom: 1px solid #e5e7eb;
     padding: 12px 0;
 }
+
 /*필터 좌/ 지도 버튼 우 간격*/
 .filter-inner {
     max-width: 1200px;
@@ -187,7 +266,7 @@ body {
     border-radius: 10px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.08);
     display: none;
-    z-index: 20;
+    z-index: 20; /*프로필 메뉴(100)보단 낮음 → 우선순위 구분*/
 }
 
 /* 활성화 상태 */
@@ -201,7 +280,7 @@ body {
     display: block;
 }
 
-/* 옵션 */
+/* 필터 메뉴 안의 개별 선택 항목 */
 .filter-option {
     padding: 10px 14px;
     font-size: 14px;
@@ -236,6 +315,7 @@ body {
     color: #333;
 }
 
+/*아이콘 여백 아이콘과 텍스트 간격 확보*/
 .reset-btn i {
     margin-right: 4px;
 }
@@ -265,6 +345,7 @@ body {
     min-width: 280px;
 }
 
+/*날짜 입력창*/
 .date-input {
     width: 100%;
     padding: 10px;
@@ -274,9 +355,10 @@ body {
     cursor: pointer;
 }
 
+/*날짜 입력창 포커스 상태*/
 .date-input:focus {
     outline: none;
-    border-color: #4CAF50;
+    border-color: #2563eb;
 }
 
 /* 필터 상태 표시 */
@@ -284,11 +366,6 @@ body {
     padding: 15px 0;
     font-size: 15px;
     color: #666;
-}
-
-.filter-status strong {
-    color: #4CAF50;
-    font-size: 18px;
 }
 
 /* 로딩 표시 */
@@ -346,9 +423,6 @@ body {
 }
 
 
-
-
-
 .map-btn {
     padding: 8px 14px;
     background: #ffffff;
@@ -361,8 +435,6 @@ body {
 .map-btn:hover {
     background: #f9fafb;
 }
-
-
 
 
 /* Main */
@@ -410,12 +482,15 @@ body {
     border-radius: 11px 11px 0 0;
     
 }
+/*이미지를 부모 요소(.facility-image)의 가로, 세로 폭에 딱 맞춤
+이미지 원본 크기와 상관없이 카드 가로 크기에 맞게 늘어나거나 줄어듦 */
 .facility-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;      
     display: block;
 }
+
 /*카드 hover시 이미지 확대*/
 .facility-image img {
     transition: transform 0.3s ease;
@@ -424,6 +499,7 @@ body {
 .facility-card:hover .facility-image img {
     transform: scale(1.05);
 }
+
 /*카테고리 배지 이미지 위에 고정 표시*/
 .category-badge {
     position: absolute;
@@ -618,3 +694,38 @@ body {
     color: white;
 }
 
+/* 무한 스크롤 - 스피너 */
+.infinite-scroll-spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 0;
+    font-size: 16px;
+    color: #666;
+    gap: 10px;
+}
+
+.infinite-scroll-spinner i {
+    font-size: 20px;
+    color: #2563eb;
+}
+
+/* 무한 스크롤 - 끝 메시지 */
+.infinite-scroll-end {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+    gap: 10px;
+}
+
+.infinite-scroll-end i {
+    font-size: 32px;
+    color: #9ca3af;
+}
+
+.infinite-scroll-end p {
+    font-size: 15px;
+    color: #9ca3af;
+}

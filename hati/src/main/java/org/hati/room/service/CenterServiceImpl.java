@@ -41,4 +41,48 @@ public class CenterServiceImpl implements CenterService {
         log.info("센터 상세 정보 조회 - centerId: " + centerId);
         return roomMapper.getCenterDetail(centerId);
     }
+    
+    @Override
+    public List<CenterVO> searchCenters(String keyword) {
+    	 log.info("센터 검색 - keyword: " + keyword);
+         return roomMapper.searchCenters(keyword);
+    }
+    
+    // 페이지네이션 센터 조회
+    @Override
+    public List<CenterVO> getPaginatedCenters(String region, String category, String sortType, int page, int pageSize) {
+        log.info("페이지네이션 조회 - region: " + region + ", category: " + category + ", page: " + page);
+        
+        Map<String, Object> params = new HashMap<>();
+        params.put("region", region);
+        params.put("category", category);
+        params.put("sortType", sortType);
+        params.put("offset", (page - 1) * pageSize);  // page=1이면 offset=0
+        params.put("pageSize", pageSize);
+        
+        return roomMapper.getPaginatedCenters(params);
+    }
+    
+    // 페이지네이션 검색 조회
+    @Override
+    public List<CenterVO> getPaginatedSearch(String keyword, int page, int pageSize) {
+        log.info("페이지네이션 검색 - keyword: " + keyword + ", page: " + page);
+        
+        Map<String, Object> params = new HashMap<>();
+        params.put("keyword", keyword);
+        params.put("offset", (page - 1) * pageSize);
+        params.put("pageSize", pageSize);
+        
+        return roomMapper.getPaginatedSearch(params);
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }

@@ -14,4 +14,13 @@ public interface RoomMapper {
     
     // 센터 상세 조회
     CenterVO getCenterDetail(int centerId);
+    
+    //센터 검색
+    List<CenterVO> searchCenters(String keyword);
+    
+    // 페이지네이션 센터 조회 
+    List<CenterVO> getPaginatedCenters(Map<String, Object> params);
+    
+    // 페이지네이션 검색 조회 
+    List<CenterVO> getPaginatedSearch(Map<String, Object> params);
 }

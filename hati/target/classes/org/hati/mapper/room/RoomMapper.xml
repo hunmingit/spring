@@ -55,6 +55,42 @@
         </choose>
     </select>
     
+    <!-- 센터 검색  -->
+    <select id="searchCenters" parameterType="string" resultType="org.hati.room.vo.CenterVO">
+        SELECT 
+            c.center_id AS centerId,
+            c.center_name AS centerName,
+            c.center_region AS centerRegion,
+            c.center_content AS centerContent,
+            c.latitude,
+            c.longitude,
+            c.created_at AS createdAt,
+            st.category AS category,
+            st.base_fee AS baseFee,
+            COUNT(DISTINCT r.room_id) AS roomCount,
+            COUNT(DISTINCT cr.account_id) AS reviewCount,
+            ROUND(AVG(cr.grade), 1) AS avgGrade
+        FROM centers c
+        LEFT JOIN rooms r ON c.center_id = r.center_id
+        LEFT JOIN sports_type st ON r.sport_id = st.sport_id
+        LEFT JOIN centers_reviews cr ON c.center_id = cr.center_id
+        WHERE c.center_name LIKE '%' || #{keyword} || '%'
+        GROUP BY 
+            c.center_id, 
+            c.center_name, 
+            c.center_region, 
+            c.center_content, 
+            c.latitude, 
+            c.longitude, 
+            c.created_at,
+            st.category,
+            st.base_fee
+        ORDER BY 
+            reviewCount DESC, 
+            avgGrade DESC, 
+            c.created_at DESC
+    </select>
+    
     <!-- 센터 상세 조회 -->
     <select id="getCenterDetail" parameterType="int" resultMap="centerDetailMap">
         SELECT 
@@ -76,6 +112,96 @@
         WHERE c.center_id = #{centerId}
         ORDER BY r.room_id
     </select>
+    
+    <!-- ⭐ 페이지네이션 센터 조회 (무한스크롤용) -->
+    <select id="getPaginatedCenters" parameterType="map" resultType="org.hati.room.vo.CenterVO">
+        SELECT * FROM (
+            SELECT 
+                c.center_id AS centerId,
+                c.center_name AS centerName,
+                c.center_region AS centerRegion,
+                c.center_content AS centerContent,
+                c.latitude,
+                c.longitude,
+                c.created_at AS createdAt,
+                st.category AS category,
+                st.base_fee AS baseFee,
+                COUNT(DISTINCT r.room_id) AS roomCount,
+                COUNT(DISTINCT cr.account_id) AS reviewCount,
+                ROUND(AVG(cr.grade), 1) AS avgGrade,
+                ROW_NUMBER() OVER (
+                    <choose>
+                        <when test="sortType == 'price_asc'">
+                            ORDER BY st.base_fee ASC NULLS LAST
+                        </when>
+                        <when test="sortType == 'price_desc'">
+                            ORDER BY st.base_fee DESC NULLS LAST
+                        </when>
+                        <when test="sortType == 'review_desc'">
+                            ORDER BY COUNT(DISTINCT cr.account_id) DESC, ROUND(AVG(cr.grade), 1) DESC, c.created_at DESC
+                        </when>
+                        <otherwise>
+                            ORDER BY c.created_at DESC
+                        </otherwise>
+                    </choose>
+                ) AS rn
+            FROM centers c
+            LEFT JOIN rooms r ON c.center_id = r.center_id
+            LEFT JOIN sports_type st ON r.sport_id = st.sport_id
+            LEFT JOIN centers_reviews cr ON c.center_id = cr.center_id
+            WHERE 1=1
+            <if test="region != null and region != ''">
+                AND c.center_region = #{region}
+            </if>
+            <if test="category != null and category != ''">
+                AND st.category = #{category}
+            </if>
+            GROUP BY 
+                c.center_id, c.center_name, c.center_region, 
+                c.center_content, c.latitude, c.longitude, 
+                c.created_at, st.category, st.base_fee
+        ) sub
+        WHERE rn > #{offset} AND rn &lt;= #{offset} + #{pageSize}
+        ORDER BY rn
+    </select>
+
+    <!-- ⭐ 페이지네이션 검색 조회 (무한스크롤 + 검색용) -->
+    <select id="getPaginatedSearch" parameterType="map" resultType="org.hati.room.vo.CenterVO">
+        SELECT * FROM (
+            SELECT 
+                c.center_id AS centerId,
+                c.center_name AS centerName,
+                c.center_region AS centerRegion,
+                c.center_content AS centerContent,
+                c.latitude,
+                c.longitude,
+                c.created_at AS createdAt,
+                st.category AS category,
+                st.base_fee AS baseFee,
+                COUNT(DISTINCT r.room_id) AS roomCount,
+                COUNT(DISTINCT cr.account_id) AS reviewCount,
+                ROUND(AVG(cr.grade), 1) AS avgGrade,
+                ROW_NUMBER() OVER (
+                    ORDER BY COUNT(DISTINCT cr.account_id) DESC, 
+                             ROUND(AVG(cr.grade), 1) DESC, 
+                             c.created_at DESC
+                ) AS rn
+            FROM centers c
+            LEFT JOIN rooms r ON c.center_id = r.center_id
+            LEFT JOIN sports_type st ON r.sport_id = st.sport_id
+            LEFT JOIN centers_reviews cr ON c.center_id = cr.center_id
+            WHERE c.center_name LIKE '%' || #{keyword} || '%'
+            GROUP BY 
+                c.center_id, c.center_name, c.center_region, 
+                c.center_content, c.latitude, c.longitude, 
+                c.created_at, st.category, st.base_fee
+        ) sub
+        WHERE rn > #{offset} AND rn &lt;= #{offset} + #{pageSize}
+        ORDER BY rn
+    </select>
+    
+    
+    
     
     <resultMap id="centerDetailMap" type="org.hati.room.vo.CenterVO">
         <id property="centerId" column="center_id"/>

@@ -9,6 +9,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import lombok.extern.log4j.Log4j;
 
 @Controller
@@ -16,23 +18,61 @@ import lombok.extern.log4j.Log4j;
 @RequestMapping("/room")
 public class RoomController {
 	
+	private static final int PAGE_SIZE = 9;
+	
     @Autowired
     private CenterService centerService;
     
     // 메인 페이지 - 전체 센터 리스트
     @GetMapping("/hatibMain")
-    public String hatibMain(Model model) {
+    public String hatibMain(
+    		@RequestParam(required = false) String keyword,
+    		Model model) {
         log.info("hatibMain 페이지 호출");
+        log.info("검색어: " + keyword);
         
-        // 전체 센터 리스트 조회
-        List<CenterVO> centerList = centerService.getCenterList();
+        List<CenterVO> centerList;
         
-        log.info("조회된 센터 수: " + centerList.size());
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            centerList = centerService.getPaginatedSearch(keyword.trim(), 1, PAGE_SIZE);
+            model.addAttribute("keyword", keyword.trim());
+        } else {
+            centerList = centerService.getPaginatedCenters(null, null, null, 1, PAGE_SIZE);
+        }
         
-        // JSP로 데이터 전달
         model.addAttribute("centerList", centerList);
+        model.addAttribute("pageSize", PAGE_SIZE);
+        model.addAttribute("hasMore", centerList.size() == PAGE_SIZE);
         
         return "room/hatibMain";
+    }
+    
+    // AJAX용 페이지네이션 엔드포인트
+    // produces = "application/json" 추가 → 반드시 JSON으로 응답
+    @GetMapping(value = "/api/centers", produces = "application/json")
+    @ResponseBody
+    public List<CenterVO> getCentersAjax(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(required = false) String region,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String sortType,
+            @RequestParam(required = false) String keyword) {
+        
+        log.info("AJAX 페이지네이션 요청 - page: " + page + 
+                ", region: " + region + ", category: " + category + 
+                ", sortType: " + sortType + ", keyword: " + keyword);
+        
+        List<CenterVO> centerList;
+        
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            centerList = centerService.getPaginatedSearch(keyword.trim(), page, PAGE_SIZE);
+        } else {
+            centerList = centerService.getPaginatedCenters(region, category, sortType, page, PAGE_SIZE);
+        }
+        
+        log.info("반환 데이터 수: " + centerList.size());
+        
+        return centerList;
     }
     
     // 필터링된 센터 리스트
@@ -45,7 +85,6 @@ public class RoomController {
         
         log.info("필터링 조건 - region: " + region + ", category: " + category + ", sortType: " + sortType);
         
-        // 필터 조건에 맞는 센터 리스트 조회
         List<CenterVO> centerList = centerService.getCenterList(region, category, sortType);
         
         model.addAttribute("centerList", centerList);
@@ -55,5 +94,4 @@ public class RoomController {
         
         return "room/hatibMain";
     }
-}    
-    // 센터 상세 페이지 (나중에 추가)
+}

@@ -1,20 +1,17 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %><!-- 숫자, 날짜 포맷용 -->
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %><!-- 문자열 처리 함수 -->
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>H.A.T.I.Booking - 메인 화면</title>
-    <!--contextPath 사용 → 배포 경로 바뀌어도 안전  -->
-    <!-- Font Awesome 아이콘 CDN -> 검색 아이콘, 프로필 아이콘용  -->
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/resources/css/hatibMain.css">
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <!-- Flatpickr CSS (캘린더 라이브러리) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 <body>
@@ -22,18 +19,19 @@
 <!-- Header -->
 <header class="header">
     <div class="header-inner">
-    <!-- 서비스 로고 영역 -->
         <div class="logo">
-            <span class="logo-box"></span><!-- 임시 -->
+            <span class="logo-box"></span>
             <span class="logo-text">H.A.T.I.Booking</span>
         </div>
-        <!-- 공간명 검색 입력 창 아직 js 구현 x -->
         <div class="header-right">
-            <div class="search-wrapper">
-                <input type="text" placeholder="공간 검색" class="search-input">
-                <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
-            </div>
-            <!-- 프로필 이미지 원형 영역 -->
+            <form action="${pageContext.request.contextPath}/room/hatibMain" method="get" class="search-form">        
+                <div class="search-wrapper">
+                    <input type="text" name="keyword" placeholder="공간 검색" class="search-input" value="${keyword}" autocomplete="off">
+                    <button type="submit" class="search-icon">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+            </form>
             <div class="profile-wrapper">
                 <div class="profile-circle"></div>
                 <div class="profile-menu">
@@ -47,11 +45,24 @@
     </div>
 </header>
 
+<!-- 검색 결과 표시 -->
+<c:if test="${not empty keyword}">
+<section class="search-result-info">
+    <div class="search-result-inner">
+        <span class="search-keyword">
+            "<strong>${keyword}</strong>" 검색 결과
+        </span>
+        <a href="${pageContext.request.contextPath}/room/hatibMain" class="clear-search">
+            <i class="fa-solid fa-xmark"></i> 검색 초기화
+        </a>
+    </div>
+</section>
+</c:if>
+
 <!-- Filter Area -->
 <section class="filter-section">
     <div class="filter-inner">
         <div class="filter-left">
-        <!-- 지역 필터 -->
             <div class="filter-item" id="regionFilter">
                 <button class="filter-btn">지역 ▼</button>
                 <div class="filter-menu">
@@ -67,7 +78,6 @@
                     </div>
                 </div>
             </div>
-			<!-- 날짜 필터 (캘린더) -->
             <div class="filter-item" id="dateFilter">
                 <button class="filter-btn">날짜 선택 ▼</button>
                 <div class="filter-menu calendar-menu">
@@ -79,7 +89,6 @@
                     </div>
                 </div>
             </div>
-			<!-- 운동 종목 필터 -->
             <div class="filter-item" id="sportFilter">
                 <button class="filter-btn">운동 종목 ▼</button>
                 <div class="filter-menu">
@@ -95,7 +104,6 @@
                     </div>
                 </div>
             </div>
-			<!-- 정렬 필터 -->
             <div class="filter-item" id="sortFilter">
                 <button class="filter-btn">정렬 기준 ▼</button>
                 <div class="filter-menu">
@@ -110,44 +118,35 @@
                 </div>
             </div>
         </div>
-
         <div class="filter-right">
             <button class="map-btn" id="mapBtn">지도</button>
-            <!-- 전체 초기화 버튼 -->
             <button class="all-reset-btn" id="allResetBtn">
                 <i class="fa-solid fa-arrow-rotate-left"></i> 전체 초기화
             </button>
-        
         </div>
     </div>
 </section>
 
 <!-- Centers List -->
 <main class="container">
-    <!-- 로딩 표시 -->
     <div id="loadingIndicator" class="loading-indicator" style="display: none;">
         <i class="fa-solid fa-spinner fa-spin"></i> 검색 중...
     </div>
-    <!-- 필터 적용 상태 표시 -->
     <div id="filterStatus" class="filter-status">
-        <span id="filterCount">전체 <strong>${fn:length(centerList)}</strong>개 시설</span>
-    </div>	
+        <span id="filterCount">시설 목록</span>
+    </div>
 
     <div class="facility-grid" id="facilityGrid">
-    <!-- 센터 목록 반복 출력 센터 하나당 카드 하나  -->
         <c:forEach var="center" items="${centerList}">
-        <!-- 카드 전체 클릭 링크 카드 클릭 시 -> 센터 상세 페이지로 이동 -->
             <a href="${pageContext.request.contextPath}/centers/${center.centerId}" 
-            class="facility-card"
-            data-region="${center.centerRegion}"
-            data-category="${center.category}"
-            data-price="${center.baseFee}">
-            
-            <!-- 센터별 대표 이미지 onerror : 이미지 없으면 기본 이미지로 대체 -->
+               class="facility-card"
+               data-region="${center.centerRegion}"
+               data-category="${center.category}"
+               data-price="${center.baseFee}">
                 <div class="facility-image">
                     <img src="${pageContext.request.contextPath}/resources/img/room/${center.centerId}/main.jpg"
-                        onerror="this.src='${pageContext.request.contextPath}/resources/img/room/default/main.jpg'"
-                        alt="센터 이미지">
+                         onerror="this.src='${pageContext.request.contextPath}/resources/img/room/default/main.jpg'"
+                         alt="센터 이미지">
                     <c:if test="${not empty center.category}">
                         <span class="category-badge">
                             <c:choose>
@@ -163,7 +162,6 @@
                 <div class="facility-content">
                     <h3 class="facility-title">${center.centerName}</h3>
                     <p class="facility-subtitle">${center.centerContent}</p>
-            
                     <div class="facility-info">
                         <span class="district">${center.centerRegion}</span>
                         <span class="price">
@@ -175,56 +173,108 @@
         </c:forEach>
     </div>
     
-    <!-- 결과 없음 메시지 -->
     <div id="noResults" class="no-results" style="display: none;">
         <i class="fa-solid fa-magnifying-glass"></i>
         <p>검색 조건에 맞는 시설이 없습니다.</p>
         <button class="all-reset-btn" onclick="resetAllFilters()">필터 초기화</button>
     </div>
     
+    <div class="infinite-scroll-spinner" id="infiniteSpinner" style="display: none;">
+        <i class="fa-solid fa-spinner fa-spin"></i> 로딩 중...
+    </div>
+
+    <div class="infinite-scroll-end" id="infiniteScrollEnd" style="display: none;">
+        <i class="fa-solid fa-check-circle"></i>
+        <p>더 이상 시설이 없습니다.</p>
+    </div>
 </main>
 
-<!-- 지도 팝업 모달 -->
+<!-- 지도 모달 -->
 <div id="mapModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
             <h2>시설 위치</h2>
-            <!-- 닫기 버튼(x) -->
             <span class="close" id="closeModal">&times;</span>
         </div>
-        <!-- 카카오 지도가 실제로 그려질 div -->
         <div class="modal-body">
             <div id="map" style="width:100%;height:600px;"></div>
         </div>
     </div>
 </div>
 
-<!-- 카카오 지도 API - HTTPS 명시, 카카오 지도 SDK, JS 파일보다 반드시 먼저 로드해야 함 -->
+<!-- 카카오 지도 SDK -->
 <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=ddf15a2e7b11221e20f39af9cfb417d0"></script>
-<!-- Flatpickr JS (캘린더) -->
+<!-- Flatpickr -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
 
-<script>
-const contextPath = '${pageContext.request.contextPath}';
+<%-- 
+    ===================================================
+    핵심 수정: hidden input을 사용하여 서버 데이터를 안전하게 전달
+    기존 문제: <script> 안에서 c:forEach로 JS 객체 직접 생성 
+              → 특수문자/빈리스트일 때 파싱 실패
+    해결: hidden input에 data 저장 → JS에서 읽기
+    ===================================================
+--%>
 
-const centerList = [
-<c:forEach var="center" items="${centerList}" varStatus="status">
-{
-    centerId: ${center.centerId},
-    centerName: "${fn:escapeXml(center.centerName)}",
-    centerRegion: "${center.centerRegion}",
-    category: "${center.category}",
-    latitude: ${center.latitude},
-    longitude: ${center.longitude},
-    baseFee: ${center.baseFee},
-    centerContent: "${fn:escapeXml(center.centerContent)}",
-    reviewCount: ${center.reviewCount}
-}<c:if test="${not status.last}">,</c:if>
+<!-- 초기 상태값을 hidden input으로 안전하게 전달 -->
+<input type="hidden" id="hiddenContextPath" value="${pageContext.request.contextPath}">
+<input type="hidden" id="hiddenPageSize" value="${pageSize}">
+<input type="hidden" id="hiddenHasMore" value="${hasMore}">
+<input type="hidden" id="hiddenKeyword" value="${empty keyword ? '' : keyword}">
+
+<!-- centerList를 각 센터마다 hidden input으로 전달 -->
+<c:forEach var="center" items="${centerList}">
+    <input type="hidden" class="hiddenCenterData"
+           data-center-id="${center.centerId}"
+           data-center-name="${fn:escapeXml(center.centerName)}"
+           data-center-region="${center.centerRegion}"
+           data-category="${center.category}"
+           data-latitude="${center.latitude}"
+           data-longitude="${center.longitude}"
+           data-base-fee="${center.baseFee}"
+           data-center-content="${fn:escapeXml(center.centerContent)}"
+           data-review-count="${center.reviewCount}">
 </c:forEach>
-];
-    
-    console.log('centerList:', centerList);
+
+<script type="text/javascript">
+// ===================================================
+// hidden input에서 안전하게 데이터 읽기
+// ===================================================
+var contextPath = document.getElementById('hiddenContextPath').value;
+var pageSize    = parseInt(document.getElementById('hiddenPageSize').value);
+var hasMore     = document.getElementById('hiddenHasMore').value === 'true';
+var keyword     = document.getElementById('hiddenKeyword').value;
+
+// centerList 배열 구성
+var centerList = [];
+document.querySelectorAll('.hiddenCenterData').forEach(function(el) {
+    centerList.push({
+        centerId:      parseInt(el.dataset.centerId),
+        centerName:    el.dataset.centerName,
+        centerRegion:  el.dataset.centerRegion,
+        category:      el.dataset.category,
+        latitude:      parseFloat(el.dataset.latitude),
+        longitude:     parseFloat(el.dataset.longitude),
+        baseFee:       parseInt(el.dataset.baseFee),
+        centerContent: el.dataset.centerContent,
+        reviewCount:   parseInt(el.dataset.reviewCount)
+    });
+});
+
+// 무한 스크롤 초기 상태
+var infiniteScrollState = {
+    currentPage: 1,
+    pageSize:    pageSize,
+    hasMore:     hasMore,
+    keyword:     keyword,
+    region:      '',
+    category:    '',
+    sortType:    ''
+};
+
+console.log('centerList:', centerList);
+console.log('infiniteScrollState:', infiniteScrollState);
 </script>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/hatibMain.js"></script>
