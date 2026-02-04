@@ -5,6 +5,7 @@ import java.util.Map;
 
 
 import org.hati.room.vo.CenterVO;
+import org.hati.room.vo.RoomVO;
 
 
 public interface RoomMapper {
@@ -23,4 +24,7 @@ public interface RoomMapper {
     
     // 페이지네이션 검색 조회 
     List<CenterVO> getPaginatedSearch(Map<String, Object> params);
+    
+    //센터의 모든룸 제어
+    List<RoomVO> getRoomsByCenter(int centerId);
 }

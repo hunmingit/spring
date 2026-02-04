@@ -91,29 +91,8 @@
             c.created_at DESC
     </select>
     
-    <!-- 센터 상세 조회 -->
-    <select id="getCenterDetail" parameterType="int" resultMap="centerDetailMap">
-        SELECT 
-            c.center_id,
-            c.center_name,
-            c.center_region,
-            c.center_content,
-            c.latitude,
-            c.longitude,
-            c.created_at,
-            r.room_id,
-            r.center_id AS room_center_id,
-            r.sport_id,
-            st.category,
-            st.base_fee
-        FROM centers c
-        LEFT JOIN rooms r ON c.center_id = r.center_id
-        LEFT JOIN sports_type st ON r.sport_id = st.sport_id
-        WHERE c.center_id = #{centerId}
-        ORDER BY r.room_id
-    </select>
     
-    <!-- ⭐ 페이지네이션 센터 조회 (무한스크롤용) -->
+    <!-- 페이지네이션 센터 조회 (무한스크롤용) -->
     <select id="getPaginatedCenters" parameterType="map" resultType="org.hati.room.vo.CenterVO">
         SELECT * FROM (
             SELECT 
@@ -200,7 +179,18 @@
         ORDER BY rn
     </select>
     
-    
+    <!--  센터의 모든 룸 조회  -->
+	<select id="getRoomsByCenter" parameterType="int" resultType="org.hati.room.vo.RoomVO"> 
+		SELECT r.room_id AS roomId, 
+		r.center_id AS centerId, 
+		r.sport_id AS sportId, 
+		st.category, 
+		st.base_fee AS baseFee 
+		FROM rooms r 
+		JOIN sports_type st ON r.sport_id = st.sport_id 
+		WHERE r.center_id = #{centerId} 
+		ORDER BY r.room_id 
+	</select>
     
     
     <resultMap id="centerDetailMap" type="org.hati.room.vo.CenterVO">

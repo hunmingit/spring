@@ -341,25 +341,21 @@ text-decoration: none; -> a 태그 기본 밑줄 제거*/
 
 /* 캘린더 메뉴 */
 .calendar-menu {
-    padding: 15px;
-    min-width: 280px;
-}
-
-/*날짜 입력창*/
-.date-input {
-    width: 100%;
     padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
+    min-width: 320px;
 }
 
-/*날짜 입력창 포커스 상태*/
-.date-input:focus {
-    outline: none;
-    border-color: #2563eb;
+/* inline 캘린더 컨테이너 */
+#inlineCalendar {
+    width: 100%;
 }
+
+/* Flatpickr inline 모드 스타일 조정 */
+#inlineCalendar .flatpickr-calendar {
+    box-shadow: none;
+    width: 100%;
+}
+
 
 /* 필터 상태 표시 */
 .filter-status {

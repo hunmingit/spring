@@ -10,8 +10,11 @@
     <title>H.A.T.I.Booking - 메인 화면</title>
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/resources/css/hatibMain.css">
+
+    <!-- 아이콘 라이브러리(돋보기, 스피너 등) -->
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- 날짜 선택기(flatpickr) 스타일 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 <body>
@@ -24,9 +27,12 @@
             <span class="logo-text">H.A.T.I.Booking</span>
         </div>
         <div class="header-right">
+        <!-- 검색 요청 get 방식 -> url에 ?keyword=  필터와 분리 -->
             <form action="${pageContext.request.contextPath}/room/hatibMain" method="get" class="search-form">        
                 <div class="search-wrapper">
+                <!-- 서버에서 내려준 keyword 다시 세팅, 검색 후에도 입력값 유지 -->
                     <input type="text" name="keyword" placeholder="공간 검색" class="search-input" value="${keyword}" autocomplete="off">
+                    <!-- i태그(아이콘 전용 컨테이너처럼 쓰는 게 관례)는 그냥 껍데기 span class 사용 해도 무방 -->
                     <button type="submit" class="search-icon">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </button>
@@ -46,12 +52,14 @@
 </header>
 
 <!-- 검색 결과 표시 -->
+<!-- 검색 했을 때만 노출 -->
 <c:if test="${not empty keyword}">
 <section class="search-result-info">
     <div class="search-result-inner">
         <span class="search-keyword">
-            "<strong>${keyword}</strong>" 검색 결과
+            "<strong>${keyword}</strong>" 검색 결과 <!-- 사용자가 입력한 검색어 강조 표시 -->
         </span>
+        <!-- a태그로 동기 방식 검색 조건 초기화, keyword 없는 기본 목록으로 이동 -->
         <a href="${pageContext.request.contextPath}/room/hatibMain" class="clear-search">
             <i class="fa-solid fa-xmark"></i> 검색 초기화
         </a>
@@ -60,14 +68,14 @@
 </c:if>
 
 <!-- Filter Area -->
+<!-- keyword 검색과는 분리되는 기능 필터 하나의 단위 -->
 <section class="filter-section">
     <div class="filter-inner">
         <div class="filter-left">
             <div class="filter-item" id="regionFilter">
                 <button class="filter-btn">지역 ▼</button>
                 <div class="filter-menu">
-                    <div class="filter-option" data-value="">전체</div>
-                    <div class="filter-option" data-value="강동구">강동구</div>
+                    <div class="filter-option" data-value="강동구">강동구</div> <!-- 실제 서버로 보낼값은 data-value-->
                     <div class="filter-option" data-value="강서구">강서구</div>
                     <div class="filter-option" data-value="강북구">강북구</div>
                     <div class="filter-option" data-value="강남구">강남구</div>
@@ -81,10 +89,11 @@
             <div class="filter-item" id="dateFilter">
                 <button class="filter-btn">날짜 선택 ▼</button>
                 <div class="filter-menu calendar-menu">
-                    <input type="text" id="datePicker" class="date-input" placeholder="날짜를 선택하세요" readonly>
+                <!--flatpickr(날짜/시간 선택용 js 라이브러리)가 inline모드(페이지 로드되자마자 달력이 그대로 보임)로 그려질 자리  input이 아니라 div 기반-->
+                    <div id="inlineCalendar"></div>
                     <div class="filter-reset">
                         <button class="reset-btn" data-filter="date">
-                            <i class="fa-solid fa-rotate-right"></i> 초기화
+                            <i class="fa-solid fa-rotate-right"></i> 초기화 <!-- 회전 화살표 아이콘 -->
                         </button>
                     </div>
                 </div>
@@ -92,7 +101,6 @@
             <div class="filter-item" id="sportFilter">
                 <button class="filter-btn">운동 종목 ▼</button>
                 <div class="filter-menu">
-                    <div class="filter-option" data-value="">전체</div>
                     <div class="filter-option" data-value="GYM">헬스</div>
                     <div class="filter-option" data-value="YOGA">요가</div>
                     <div class="filter-option" data-value="FOOTBALL">풋살</div>
@@ -137,13 +145,16 @@
     </div>
 
     <div class="facility-grid" id="facilityGrid">
+    <!-- 서버에서 내려준 초기 센터 목록(최초 페이지 로드용 이후 ajax(비동기)로 갱신됨 -->
         <c:forEach var="center" items="${centerList}">
+        <!-- 카드 전체가 링크, 센터 상세 페이지로 이동 -->
             <a href="${pageContext.request.contextPath}/centers/${center.centerId}" 
                class="facility-card"
                data-region="${center.centerRegion}"
                data-category="${center.category}"
                data-price="${center.baseFee}">
                 <div class="facility-image">
+                <!-- 센터별 대표 이미지, 이미지 없으면 기본 이미지(onerror) -->
                     <img src="${pageContext.request.contextPath}/resources/img/room/${center.centerId}/main.jpg"
                          onerror="this.src='${pageContext.request.contextPath}/resources/img/room/default/main.jpg'"
                          alt="센터 이미지">
@@ -176,7 +187,7 @@
     <div id="noResults" class="no-results" style="display: none;">
         <i class="fa-solid fa-magnifying-glass"></i>
         <p>검색 조건에 맞는 시설이 없습니다.</p>
-        <button class="all-reset-btn" onclick="resetAllFilters()">필터 초기화</button>
+        <button class="all-reset-btn" onclick="resetAllFilters()">전체 초기화</button>
     </div>
     
     <div class="infinite-scroll-spinner" id="infiniteSpinner" style="display: none;">
@@ -213,7 +224,7 @@
     핵심 수정: hidden input을 사용하여 서버 데이터를 안전하게 전달
     기존 문제: <script> 안에서 c:forEach로 JS 객체 직접 생성 
               → 특수문자/빈리스트일 때 파싱 실패
-    해결: hidden input에 data 저장 → JS에서 읽기
+    해결:  HTML data- 속성 hidden input에 data 저장 → JS에서 읽기
     ===================================================
 --%>
 
@@ -224,6 +235,7 @@
 <input type="hidden" id="hiddenKeyword" value="${empty keyword ? '' : keyword}">
 
 <!-- centerList를 각 센터마다 hidden input으로 전달 -->
+<!--  센터 1개 = hidden input 1개, js에서 전부 읽어서  centerList 배열 재구성-->
 <c:forEach var="center" items="${centerList}">
     <input type="hidden" class="hiddenCenterData"
            data-center-id="${center.centerId}"

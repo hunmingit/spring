@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="org.hati.room.mapper.CenterDetailMapper">
+
+    <!-- 센터 상세 정보 조회 -->
+    <select id="getCenterDetail" parameterType="int" resultType="org.hati.room.vo.CenterDetailVO">
+        SELECT 
+            c.center_id AS centerId,
+            c.center_name AS centerName,
+            c.center_content AS centerContent,
+            c.center_region AS centerRegion,
+            c.latitude,
+            c.longitude,
+            c.created_at AS createdAt,
+            c.space,
+            c.facility,
+            c.notice,
+            st.category AS category,
+            st.base_fee AS baseFee,
+            COUNT(DISTINCT cr.account_id) AS reviewCount,
+            ROUND(AVG(cr.grade), 1) AS avgGrade
+        FROM centers c
+        LEFT JOIN rooms r ON c.center_id = r.center_id
+        LEFT JOIN sports_type st ON r.sport_id = st.sport_id
+        LEFT JOIN centers_reviews cr ON c.center_id = cr.center_id
+        WHERE c.center_id = #{centerId}
+        GROUP BY 
+            c.center_id, c.center_name, c.center_content, 
+            c.center_region, c.latitude, c.longitude, 
+            c.created_at, c.space, c.facility, c.notice,
+            st.category, st.base_fee
+    </select>
+
+    <!-- 편의시설 목록 조회 -->
+    <select id="getAmenities" parameterType="int" resultType="string">
+        SELECT a.amenity_text
+        FROM rooms r
+        JOIN rooms_amenities_links ral ON r.room_id = ral.room_id
+        JOIN amenities a ON ral.amenity_id = a.amenity_id
+        WHERE r.center_id = #{centerId}
+        GROUP BY a.amenity_text
+        ORDER BY a.amenity_text
+    </select>
+
+    <!-- 리뷰 목록 조회 -->
+    <select id="getReviews" parameterType="int" resultType="org.hati.room.vo.ReviewDetailVO">
+        SELECT 
+            cr.center_id AS centerId,
+            cr.account_id AS accountId,
+            a.name AS accountName,
+            cr.grade,
+            cr.review_text AS reviewText,
+            cr.review_date AS reviewDate
+        FROM centers_reviews cr
+        JOIN accounts a ON cr.account_id = a.account_id
+        WHERE cr.center_id = #{centerId}
+        ORDER BY cr.review_date DESC
+    </select>
+
+    <!-- 최신 온습도 정보 조회 -->
+    <select id="getLatestEnvReading" parameterType="int" resultType="org.hati.room.vo.CenterDetailVO">
+        SELECT 
+            temperature,
+            humidity
+        FROM (
+            SELECT 
+                rer.temperature,
+                rer.humidity,
+                ROW_NUMBER() OVER (ORDER BY rer.measured_at DESC) AS rn
+            FROM room_env_reading rer
+            JOIN rooms r ON rer.room_id = r.room_id
+            WHERE r.center_id = #{centerId}
+        ) sub
+        WHERE rn = 1
+    </select>
+
+    <!-- 예약 가능한 시간 슬롯 조회 -->
+    <select id="getAvailableSlots" resultType="org.hati.room.vo.RoomSlotVO">
+        SELECT 
+            slot_id AS slotId,
+            room_id AS roomId,
+            slot_date AS slotDate,
+            start_time AS startTime,
+            end_time AS endTime,
+            status,
+            hold_until AS holdUntil,
+            updated_at AS updatedAt,
+            EXTRACT(HOUR FROM start_time) AS hour,
+            CASE WHEN status = 'AVAILABLE' THEN 1 ELSE 0 END AS available
+        FROM room_slots
+        WHERE room_id = #{roomId}
+          AND TRUNC(slot_date) = TO_DATE(#{slotDate}, 'YYYY-MM-DD')
+          AND status IN ('AVAILABLE', 'HOLD')
+        ORDER BY start_time
+    </select>
+
+    <!-- 찜 여부 확인 -->
+    <select id="checkBookmark" resultType="int">
+        SELECT COUNT(*)
+        FROM room_booking
+        WHERE account_id = #{accountId}
+          AND room_id = #{roomId}
+    </select>
+
+    <!-- 찜 추가 -->
+    <insert id="addBookmark">
+        INSERT INTO room_booking (account_id, room_id)
+        VALUES (#{accountId}, #{roomId})
+    </insert>
+
+    <!-- 찜 삭제 -->
+    <delete id="removeBookmark">
+        DELETE FROM room_booking
+        WHERE account_id = #{accountId}
+          AND room_id = #{roomId}
+    </delete>
+
+</mapper>
