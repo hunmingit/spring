@@ -45,18 +45,19 @@
     </select>
 
     <!-- 리뷰 목록 조회 -->
-    <select id="getReviews" parameterType="int" resultType="org.hati.room.vo.ReviewDetailVO">
+    <select id="getReviews" parameterType="int" resultType="org.hati.room.vo.CenterReviewVO">
         SELECT 
             cr.center_id AS centerId,
             cr.account_id AS accountId,
             a.name AS accountName,
             cr.grade,
-            cr.review_text AS reviewText,
-            cr.review_date AS reviewDate
+            cr.content,
+            cr.created_at AS createdAt,
+            cr.updated_at AS updatedAt
         FROM centers_reviews cr
         JOIN accounts a ON cr.account_id = a.account_id
         WHERE cr.center_id = #{centerId}
-        ORDER BY cr.review_date DESC
+        ORDER BY cr.created_at DESC
     </select>
 
     <!-- 최신 온습도 정보 조회 -->

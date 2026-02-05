@@ -126,9 +126,9 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <p class="review-content">${fn:escapeXml(review.reviewText)}</p>
+                                    <p class="review-content">${fn:escapeXml(review.content)}</p>
                                     <p class="review-date">
-                                        <fmt:formatDate value="${review.reviewDate}" pattern="yyyy.MM.dd HH:mm:ss"/>
+                                        <fmt:formatDate value="${review.createdAt}" pattern="yyyy.MM.dd HH:mm:ss"/>
                                     </p>
                                 </div>
                             </c:forEach>

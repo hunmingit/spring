@@ -23,23 +23,26 @@ public class RoomController {
     @Autowired
     private CenterService centerService;
     
-    // 메인 페이지 - 전체 센터 리스트
+    /*메인 페이지 - 전체 센터 리스트
+     * 페이지 최초 진입 시 html(jsp)을 렌더링  HTML 페이지 렌더링용 (SSR)
+     * SSR : 서버가 HTML완성하고 완성된 HTML을 브라우저로 전송*/   
     @GetMapping("/hatibMain")
     public String hatibMain(
-    		@RequestParam(required = false) String keyword,
+    		@RequestParam(required = false)/*요청에 keyword가 없어도 OK 없으면 keyword == null 로 들어와*/ String keyword,
     		Model model) {
         log.info("hatibMain 페이지 호출");
         log.info("검색어: " + keyword);
-        
+        //jsp로 내려줄 센터 목록
         List<CenterVO> centerList;
-        
+        //keyword 있으면 -> 검색 결과
         if (keyword != null && !keyword.trim().isEmpty()) {
             centerList = centerService.getPaginatedSearch(keyword.trim(), 1, PAGE_SIZE);
             model.addAttribute("keyword", keyword.trim());
+        /*keyword 없으면 -> 전체 목록*/
         } else {
             centerList = centerService.getPaginatedCenters(null, null, null, 1, PAGE_SIZE);
         }
-        
+        //JSP에서 시설 카드 목록 렌더링용
         model.addAttribute("centerList", centerList);
         model.addAttribute("pageSize", PAGE_SIZE);
         model.addAttribute("hasMore", centerList.size() == PAGE_SIZE);

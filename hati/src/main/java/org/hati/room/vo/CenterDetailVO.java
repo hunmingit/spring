@@ -29,8 +29,8 @@ public class CenterDetailVO {
     // 편의시설 목록
     private List<String> amenities;
     
-    // 리뷰 목록
-    private List<ReviewDetailVO> reviews;
+    // 리뷰 목록 (CenterReviewVO 사용)
+    private List<CenterReviewVO> reviews;
     private int reviewCount;
     private Double avgGrade;
     

@@ -4,7 +4,7 @@ import java.util.List;
 import org.hati.room.mapper.CenterDetailMapper;
 import org.hati.room.mapper.RoomMapper;
 import org.hati.room.vo.CenterDetailVO;
-import org.hati.room.vo.ReviewDetailVO;
+import org.hati.room.vo.CenterReviewVO;
 import org.hati.room.vo.RoomSlotVO;
 import org.hati.room.vo.RoomVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public class CenterDetailServiceImpl implements CenterDetailService {
         centerDetail.setAmenities(amenities);
         
         // 3. 리뷰 조회
-        List<ReviewDetailVO> reviews = centerDetailMapper.getReviews(centerId);
+        List<CenterReviewVO> reviews = centerDetailMapper.getReviews(centerId);
         centerDetail.setReviews(reviews);
         
         // 4. 최신 온습도 정보 조회

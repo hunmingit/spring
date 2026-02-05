@@ -43,10 +43,10 @@ body {
     gap: 8px; /*아이콘 ↔ 텍스트 사이 간격*/
 }
 /*로고 아이콘 역할(추후 이미지로 교체)*/
-.logo-box {
-    width: 24px;
-    height: 24px;
-    background: #2563eb;
+.logo-image {
+    width: 40px;   /* 로고 크기 */
+    height: 40px;
+    object-fit: contain; /* 비율 유지 */
 }
 /*로고 컬러 통일 */
 .logo-text {
@@ -631,7 +631,6 @@ text-decoration: none; -> a 태그 기본 밑줄 제거*/
 .modal-body {
     padding: 20px 30px 30px;
 }
-
 /* 지도 내 커스텀 오버레이 스타일 */
 /*지도 카드 대신 표식되는 마커*/
 .custom-overlay {
@@ -651,6 +650,7 @@ text-decoration: none; -> a 태그 기본 밑줄 제거*/
     background: #0080ff;
     color: white;
     transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(0, 128, 255, 0.4); /* hover 시 그림자 강화 */
 }
 /*말풍선 꼬리 표현*/
 .custom-overlay::after {
@@ -689,6 +689,7 @@ text-decoration: none; -> a 태그 기본 밑줄 제거*/
 .custom-overlay:hover .overlay-price {
     color: white;
 }
+
 
 /* 무한 스크롤 - 스피너 */
 .infinite-scroll-spinner {

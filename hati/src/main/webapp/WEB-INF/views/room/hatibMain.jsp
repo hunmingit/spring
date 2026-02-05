@@ -8,6 +8,10 @@
 <head>
     <meta charset="UTF-8">
     <title>H.A.T.I.Booking - 메인 화면</title>
+    
+    <!-- Favicon -->
+      <link rel="icon" type="image/jgp" href="${pageContext.request.contextPath}/resources/img/logo/logo.jpg">
+      
     <link rel="stylesheet"
           href="${pageContext.request.contextPath}/resources/css/hatibMain.css">
 
@@ -23,7 +27,9 @@
 <header class="header">
     <div class="header-inner">
         <div class="logo">
-            <span class="logo-box"></span>
+             <img src="${pageContext.request.contextPath}/resources/img/logo/logo.jpg" 
+        		  alt="H.A.T.I.Booking 로고" 
+        		  class="logo-image">
             <span class="logo-text">H.A.T.I.Booking</span>
         </div>
         <div class="header-right">
