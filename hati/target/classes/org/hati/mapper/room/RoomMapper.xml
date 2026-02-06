@@ -3,7 +3,19 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
     
 <mapper namespace="org.hati.room.mapper.RoomMapper">
-    <!-- 센터 리스트 조회 -->
+    <!-- 센터 리스트 조회 
+   	 가져올때  지역 필터 가능, 종목 필터 가능, 가격/리뷰 정렬 필터 가능  
+   	 Java에서 roomMapper.getCenterList(params)로 호출
+   	 c.//st.//r. 왜 붙였지? -> 어느 테이블 컬럼인지 명확하게 하기 위함 특히 join이 들어가는 경우 더욱 더 사용한다.
+    -->
+    <!-- 룸, 스포츠 타입, 센터 리뷰가 없더라고 센터는 보여야 하기 때문에 leftjoin INNER JOIN 쓰면 데이터 없는 센터는 통째로 사라짐
+    region이 null 또는 "" → SQL에 안 붙음, 값 있으면: AND c.center_region = '강동구'
+    -->
+    <!-- WHERE 1=1 왜 씀? 동적 조건 AND로 편하게 붙이기위함 1=1 이면..(항상 참인 조건)  -->
+    <!-- GROUP BY 묶는 이유 
+    COUNT(DISTINCT r.room_id) AS roomCount, COUNT(DISTINCT cr.account_id) AS reviewCount, ROUND(AVG(cr.grade), 1) AS avgGrade
+	위 쿼리와 같이 COUNT, AVG 같은 집계함수를 쓰기 위해 묶는다
+     -->
     <select id="getCenterList" parameterType="map" resultType="org.hati.room.vo.CenterVO">
         SELECT 
             c.center_id AS centerId,
@@ -19,7 +31,7 @@
             COUNT(DISTINCT cr.account_id) AS reviewCount,
             ROUND(AVG(cr.grade), 1) AS avgGrade
         FROM centers c
-        LEFT JOIN rooms r ON c.center_id = r.center_id
+        LEFT JOIN rooms r ON c.center_id = r.center_id 
         LEFT JOIN sports_type st ON r.sport_id = st.sport_id
         LEFT JOIN centers_reviews cr ON c.center_id = cr.center_id
         WHERE 1=1
@@ -55,7 +67,12 @@
         </choose>
     </select>
     
-    <!-- 센터 검색  -->
+    <!-- 센터 검색 (검색모드) 센터 이름에 keyword가 들어간 센터들을 찾고 센터 + 종목(category) 단위로 묶어서
+   	방 개수, 리뷰 수, 평균 평점을 계산한 뒤 리뷰 많은 순 → 평점 높은 순 → 최신 순으로 정렬
+   	WHERE c.center_name LIKE '%' || #{keyword} || '%' 왜 이렇게 쓸까? 만약 키워드에 짐을 입력하면...
+   	WHERE c.center_name LIKE '%짐%' 이렇게 실행되고 "강남짐", "우리짐센터" 등 센터 이름에 keyword 포함되면 전부 검색된다.
+	ORDER BY : 리뷰 많은 센터 -> 리뷰 수 같으면 평점 높은 센터 -> 또 같으면 최근 등록 센터   	
+		 	-->
     <select id="searchCenters" parameterType="string" resultType="org.hati.room.vo.CenterVO">
         SELECT 
             c.center_id AS centerId,
@@ -92,7 +109,11 @@
     </select>
     
     
-    <!-- 페이지네이션 센터 조회 (무한스크롤용) -->
+    <!-- 페이지네이션 센터 조회 (무한스크롤용) - 정렬 기준이 동적으로 바뀜. 
+    ROW_NUMBER 왜 씀? : 정렬된 전체 센터 목록에 “줄 번호(rn)”를 붙이기 위해서 -> 결과 행마다 1,2,3,4... 번호를 매김
+    1페이지 → rn 1~9, 2페이지 → rn 10~18 이런식으로 아래로 계속 이어짐  (rn > 0 AND rn <= 9)
+     ) sub 이게 뭐냐?? : 지금까지 쓴 쿼리를 서브 쿼리로 감싼다 ROW_NUMBER()로 만든 rn을 밖에서 WHERE로 자르기 위해
+    -->
     <select id="getPaginatedCenters" parameterType="map" resultType="org.hati.room.vo.CenterVO">
         SELECT * FROM (
             SELECT 
@@ -124,6 +145,7 @@
                         </otherwise>
                     </choose>
                 ) AS rn
+            <!-- 센터에 속한 룸들 연결 -> 룸이 어떤 종목인지(가격) -> 센터에 달린 리뷰들-->
             FROM centers c
             LEFT JOIN rooms r ON c.center_id = r.center_id
             LEFT JOIN sports_type st ON r.sport_id = st.sport_id
@@ -140,11 +162,13 @@
                 c.center_content, c.latitude, c.longitude, 
                 c.created_at, st.category, st.base_fee
         ) sub
+        <!-- params.put("offset", (page - 1) * pageSize);  // page=1이면 offset=0 
+        rn > 0 AND rn <= 9-->
         WHERE rn > #{offset} AND rn &lt;= #{offset} + #{pageSize}
         ORDER BY rn
     </select>
 
-    <!-- ⭐ 페이지네이션 검색 조회 (무한스크롤 + 검색용) -->
+    <!-- 페이지네이션 검색 조회 (무한스크롤 + 검색용) -->
     <select id="getPaginatedSearch" parameterType="map" resultType="org.hati.room.vo.CenterVO">
         SELECT * FROM (
             SELECT 

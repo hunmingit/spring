@@ -18,6 +18,7 @@ public class CenterServiceImpl implements CenterService {
     @Autowired
     private RoomMapper roomMapper;
     
+    //전체 조회 (관리자용으로 사용)
     @Override
     public List<CenterVO> getCenterList() {
         log.info("전체 센터 리스트 조회");
